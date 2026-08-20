@@ -1052,10 +1052,19 @@ pages.forEach((p,i)=>{
   #login-form button:disabled{opacity:.6;cursor:default}
   #login-error{display:none;background:var(--no-tint);color:var(--no);font-size:18px;
     padding:8px 10px;border-radius:7px;margin-bottom:14px}
-  #login-loading{display:flex;align-items:center;justify-content:center;height:100vh;color:var(--slate);
-    font-family:var(--fm);font-size:18px}
+  #login-loading{position:fixed;inset:0;z-index:101;display:flex;align-items:center;
+    justify-content:center;background:var(--bg)}
+  #login-loading .spinner{width:42px;height:42px;border:3px solid var(--brand-lt);
+    border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){#login-loading .spinner{animation:none}}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
-<div id="login-loading">Loading&hellip;</div>
+<div id="login-loading" role="status" aria-live="polite" aria-label="Loading">
+  <span class="spinner" aria-hidden="true"></span>
+  <span class="sr-only">Loading</span>
+</div>
 <div id="login-gate" class="hidden">
   <div id="login-card">
     <h1>Aspirus Health &mdash; Automation Prioritization</h1>
