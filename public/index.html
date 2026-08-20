@@ -1042,6 +1042,12 @@ pages.forEach((p,i)=>{
   #login-gate.hidden{display:none}
   #login-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);
     border-radius:14px;padding:30px 28px;box-shadow:0 18px 48px rgba(13,27,62,.14)}
+  .login-logo{display:flex;align-items:center;justify-content:center;gap:11px;margin:0 0 22px}
+  .login-logo svg{width:38px;height:38px;flex-shrink:0;display:block}
+  .login-word{font-family:var(--fd);font-size:30px;font-weight:600;letter-spacing:.01em;
+    color:var(--btn);display:flex;align-items:center;line-height:1}
+  .login-o{width:.62em;height:.62em;border:2.4px solid currentColor;border-radius:50%;
+    margin:0 .04em 0 .02em;box-sizing:border-box;flex-shrink:0}
   #login-card h1{font-family:var(--fd);font-size:28px;margin:0 0 8px;line-height:1.2}
   #login-card p{font-size:18px;color:var(--slate);margin:0 0 20px;line-height:1.55}
   #login-form label{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;
@@ -1068,6 +1074,26 @@ pages.forEach((p,i)=>{
 </div>
 <div id="login-gate" class="hidden">
   <div id="login-card">
+    <div class="login-logo" aria-label="Genzeon">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <g fill="none" stroke="#2F5EF5" stroke-width="1.6" stroke-linecap="round">
+          <line x1="20" y1="20" x2="20" y2="7"/>
+          <line x1="20" y1="20" x2="32.36" y2="15.98"/>
+          <line x1="20" y1="20" x2="27.64" y2="30.51"/>
+          <line x1="20" y1="20" x2="12.36" y2="30.51"/>
+          <line x1="20" y1="20" x2="7.64" y2="15.98"/>
+        </g>
+        <g fill="#fff" stroke="#2F5EF5" stroke-width="1.6">
+          <circle cx="20" cy="20" r="2.7"/>
+          <circle cx="20" cy="7" r="2.7"/>
+          <circle cx="32.36" cy="15.98" r="2.7"/>
+          <circle cx="27.64" cy="30.51" r="2.7"/>
+          <circle cx="12.36" cy="30.51" r="2.7"/>
+          <circle cx="7.64" cy="15.98" r="2.7"/>
+        </g>
+      </svg>
+      <span class="login-word" aria-hidden="true">genze<span class="login-o"></span>n</span>
+    </div>
     <h1>Aspirus Health &mdash; Automation Prioritization</h1>
     <p>This portal contains confidential business data. Sign in with your email and password.</p>
     <div id="login-error"></div>
