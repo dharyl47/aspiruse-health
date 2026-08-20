@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aspirus Health - Automation Use Case Priority</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1B2D; --ink-2:#3A485C; --mute:#78859A;
+    --bg:#F2F4F7; --panel:#FFFFFF; --rule:#DCE1E9; --rule-soft:#EEF1F5;
+    --brand:#0B4F6C; --brand-2:#1B7A9E; --brand-3:#7FB4C6; --brand-lt:#E1F0F5;
+    --hot:#B5641E; --hot-lt:#FBEDE3;
+    --ok:#2C7A5B; --no:#B23A2E; --no-lt:#FBECEA;
+    --fd:'Archivo',sans-serif; --fb:'Inter',sans-serif;
+    /* legacy aliases so every existing rule below keeps working under the new palette */
+    --ink-soft:var(--ink-2); --slate:var(--ink-2); --slate-lt:var(--mute);
+    --blue:var(--brand-2); --blue-deep:var(--brand); --blue-tint:var(--brand-lt); --blue-lift:var(--brand-3);
+    --amber:var(--hot); --amber-tint:var(--hot-lt);
+    --no-tint:var(--no-lt); --line:var(--rule); --line-soft:var(--rule-soft);
+    --p1:var(--brand); --p2:var(--hot); --p3:var(--mute);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--fb);-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+  table,.n,.v,.num,.mono,.tabular{font-variant-numeric:tabular-nums lining-nums}
+  ::selection{background:var(--brand-lt)}
+  a{color:inherit}
+
+  /* SIDEBAR */
+  .sidebar{width:268px;flex:0 0 268px;background:var(--brand);color:#D3E5EC;padding:30px 20px 22px;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
+  .sidebar:before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:100% 4px;opacity:.6;pointer-events:none}
+  .sidebar>*{position:relative;z-index:1}
+  .brand{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.16)}
+  .brand .eyebrow{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#8FC4D6;font-weight:600}
+  .brand h1{font-family:var(--fd);font-size:19px;font-weight:700;line-height:1.24;letter-spacing:-.02em;margin:11px 0 0;color:#fff}
+  .brand .sub{font-size:11px;color:#8FC4D6;margin-top:8px;line-height:1.55}
+  .navlabel{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#6E9FB2;margin:2px 2px 11px;font-weight:600}
+  nav{display:flex;flex-direction:column;gap:1px}
+  .nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;cursor:pointer;font-size:12.5px;font-weight:450;color:#B4D3DE;border-left:2px solid transparent;transition:background .15s}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-item.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:#7FD4EC;font-weight:600}
+  .nav-item:focus-visible{outline:2px solid #7FD4EC;outline-offset:1px}
+  .nl{display:flex;align-items:center;gap:9px;min-width:0}
+  .nn{font-size:10px;color:#5E90A5;flex:0 0 15px}
+  .nav-item.active .nn{color:#7FD4EC}
+  .nt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:.04em;padding:3px 6px;flex-shrink:0}
+  .chip.P1{background:#7FD4EC;color:#06384D}
+  .chip.P2{background:rgba(127,212,236,.2);color:#9FD8EA}
+  .chip.P3{background:rgba(255,255,255,.11);color:#9EB9C4}
+  .chip.PD{background:rgba(240,169,59,.24);color:#F2C285}
+  .tier.Pending{background:var(--hot-lt);color:var(--hot)}
+  .sfoot{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.14);font-size:10px;color:#7BA6B7;line-height:1.75}
+  .sfoot b{color:#B4D3DE;font-weight:600}
+
+  /* MAIN */
+  main{flex:1;min-width:0}
+  .page{display:none}
+  .page.active{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.page.active{animation:none}*{transition:none!important}}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 48px;background:var(--panel);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:5}
+  .crumb{font-size:10.5px;color:var(--mute);letter-spacing:.05em;text-transform:uppercase}
+  .crumb b{color:var(--ink);font-weight:600}
+  .pill{font-size:10px;padding:5px 10px;background:var(--bg);border:1px solid var(--rule);color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+  .pill.logout-pill{cursor:pointer;text-decoration:none;transition:background .15s,color .15s,border-color .15s}
+  .pill.logout-pill:hover{background:var(--brand-lt);color:var(--brand);border-color:var(--brand-3)}
+  .shell{max-width:1140px;margin:0 auto;padding:40px 48px 90px}
+
+  /* MASTHEAD (summary page only) */
+  .masthead{background:var(--brand);color:#fff;padding:48px 0 42px}
+  .mast-in{max-width:1140px;margin:0 auto;padding:0 48px;display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:nowrap}
+  .mast-in>div:first-child{flex:1;min-width:0}
+  .masthead .eyebrow{font-family:var(--fd);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#8FC4D6;font-weight:700;margin-bottom:16px}
+  .masthead h1.t{font-family:var(--fd);font-size:40px;font-weight:700;line-height:1.06;letter-spacing:-.03em;margin:0 0 15px;max-width:none;color:#fff}
+  .masthead p.lede{font-size:14.5px;line-height:1.7;color:#BCD9E3;max-width:60ch;margin:0}
+  .mast-side{text-align:right;font-size:11px;line-height:1.85;color:#8FC4D6;flex:0 0 230px;padding-top:5px}
+
+  .eyebrow{font-family:var(--fd);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin-bottom:11px}
+  h1.t{font-family:var(--fd);font-size:33px;font-weight:700;line-height:1.14;letter-spacing:-.015em;margin:0 0 12px}
+  p.lede{font-size:15px;line-height:1.68;color:var(--ink-2);max-width:660px;margin:0}
+
+  /* headline band */
+  .band{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:32px 0 42px}
+  .bcell{background:var(--panel);padding:21px 24px}
+  .bcell .n{font-family:var(--fd);font-size:29px;font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--brand)}
+  .bcell .l{font-size:11.5px;color:var(--ink-2);margin-top:10px;line-height:1.5}
+
+  /* EXHIBITS (replaces the old slabel/stitle/card header pattern) */
+  .exhibit{margin-bottom:42px;background:var(--panel);border:1px solid var(--rule)}
+  .ex-head{border-bottom:2px solid var(--brand);padding:19px 26px 17px;display:flex;gap:16px;align-items:flex-start}
+  .ex-no{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;background:var(--brand);padding:6px 9px;flex-shrink:0;line-height:1.1}
+  .ex-label{font-family:var(--fd);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:700;margin-bottom:6px}
+  h2.ex-title{font-family:var(--fd);font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.28}
+  p.ex-sub{font-size:13px;color:var(--ink-2);line-height:1.62;margin:7px 0 0;max-width:74ch}
+  .ex-body{padding:26px}
+  .ex-body.flush{padding:0}
+  /* card kept as an alias of exhibit's inner body for any leftover references */
+  .card{background:var(--panel);border:1px solid var(--rule);padding:24px 26px 18px;margin-bottom:42px}
+
+  /* matrix */
+  .flag{display:inline-block;font-size:10.5px;color:var(--hot);background:var(--hot-lt);border:1px solid rgba(181,100,30,.28);padding:6px 11px;margin-bottom:20px;letter-spacing:.03em}
+  .mx{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}
+  .mxsvg{flex:1 1 520px;min-width:320px}
+  .mxkey{flex:0 1 240px;display:flex;flex-direction:column;gap:17px;padding-top:2px}
+  .kgrp .kh,.kh{font-family:var(--fd);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:9px;font-weight:700}
+  .krow{display:flex;align-items:flex-start;gap:9px;font-size:11.5px;color:var(--ink-2);padding:3px 0;line-height:1.45}
+  .kdot{width:10px;height:10px;border-radius:50%;flex:0 0 10px;margin-top:3px}
+  .kring{width:10px;height:10px;border-radius:50%;flex:0 0 10px;border:2px dashed var(--mute);background:transparent;margin-top:3px}
+  .knum{font-family:var(--fd);font-weight:700;color:var(--ink)}
+  .kread{color:var(--mute);font-size:11px;line-height:1.6;display:block}
+  .qdot{cursor:pointer}
+  .qdot circle.hit{transition:r .18s ease}
+  .qdot:hover circle.hit,.qdot:focus-visible circle.hit{r:10}
+  .qdot:focus-visible{outline:none}
+  .vpt{cursor:default}
+  .vpt circle.hit{transition:r .18s ease}
+  .vpt:hover circle.hit,.vpt:focus-visible circle.hit{r:7}
+  .vpt:focus-visible{outline:none}
+
+  /* chart tooltip */
+  .viz-tt{position:fixed;z-index:60;display:none;pointer-events:none;background:var(--ink);color:#fff;border-radius:4px;padding:10px 13px;box-shadow:0 10px 30px rgba(15,27,45,.3);max-width:260px}
+  .viz-tt .tt-h{font-family:var(--fd);font-size:12.5px;font-weight:600;margin-bottom:6px;line-height:1.35}
+  .viz-tt .tt-r{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#C3D3DE;padding:2px 0}
+  .viz-tt .tt-r b{font-weight:600;color:#fff;margin-left:auto;padding-left:14px}
+  .viz-tt .tt-k{width:8px;height:2.5px;border-radius:2px;flex:0 0 8px}
+  .viz-tt .tt-tag{font-family:var(--fd);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#8FC4D6;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12)}
+
+  /* table */
+  .tbl-wrap{background:var(--panel)}
+  table.rank,table.cvf,table.est{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel)}
+  table.rank thead th,table.cvf thead th,table.est thead th{text-align:left;font-family:var(--fd);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:700;padding:14px 12px 13px;background:#FAFCFD;border-bottom:1px solid var(--rule)}
+  table.rank th.r,table.rank td.r{text-align:right}
+  table.rank tbody td,table.cvf tbody td,table.est tbody td{padding:13px 12px;border-bottom:1px solid var(--rule-soft);color:var(--ink-2);vertical-align:top;line-height:1.5}
+  table.rank tr:last-child td,table.cvf tr:last-child td,table.est tr:last-child td{border-bottom:none}
+  table.rank tbody tr:hover td{background:#F8FAFC}
+  table.rank tbody tr.clickable{cursor:pointer}
+  table.rank tbody tr:not(.clickable){cursor:default}
+  .mono{font-family:var(--fb)}
+  .ucname{font-family:var(--fd);font-weight:600;font-size:13px;color:var(--ink);line-height:1.35}
+  .vbar{position:relative;height:22px;background:var(--rule-soft);min-width:150px}
+  .vbar-fill{position:absolute;left:0;top:0;bottom:0}
+  .vbar-val{position:absolute;right:8px;top:0;bottom:0;display:flex;align-items:center;font-family:var(--fd);font-weight:700;font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}
+  .tier{display:inline-block;font-family:var(--fd);font-size:9.5px;font-weight:700;letter-spacing:.04em;padding:4px 9px;white-space:nowrap}
+  .tier.P1{background:var(--brand);color:#fff}
+  .tier.P2{background:var(--brand-lt);color:var(--brand)}
+  .tier.P3{background:#EDF0F4;color:var(--mute)}
+  .est{color:var(--hot);font-size:9.5px}
+  .ev{display:inline-flex;align-items:center;gap:6px;font-size:11.5px}
+  .evd{width:7px;height:7px;border-radius:50%}
+  .foot-note{font-size:11.5px;color:var(--mute);line-height:1.7;margin:14px 0 42px;max-width:92ch}
+  .foot-note b{color:var(--ink-2)}
+  .neg{color:var(--no);font-weight:600}
+
+  /* DETAIL */
+  .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:26px;padding-bottom:24px;border-bottom:1px solid var(--rule);margin-bottom:30px}
+  h1.dt{font-family:var(--fd);font-size:28px;font-weight:700;letter-spacing:-.015em;margin:0 0 11px}
+  .dframe{font-size:14px;line-height:1.68;color:var(--ink-2);max-width:640px}
+  .tierlg{font-family:var(--fd);font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:7px 13px;white-space:nowrap;flex-shrink:0}
+  .tierlg.P1{background:var(--brand);color:#fff}
+  .tierlg.P2{background:var(--hot-lt);color:var(--hot);border:1px solid #E8C69B}
+  .tierlg.P3{background:#EDF0F4;color:var(--mute);border:1px solid #DCE2EC}
+
+  .qf{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:36px}
+  .qfc{background:var(--panel);padding:15px 16px}
+  .qfc .k{font-size:9.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+  .qfc .v{font-family:var(--fd);font-size:13px;font-weight:600;line-height:1.35}
+  .qfc .vsub{font-size:9.5px;color:var(--hot);margin-top:3px}
+
+  section.d{margin-bottom:40px}
+  .body{font-size:14px;line-height:1.75;color:var(--ink-2);max-width:720px;margin:0}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .box{background:var(--panel);border:1px solid var(--rule);padding:19px 21px}
+  .box.in{border-top:3px solid var(--ok)}
+  .box.out{border-top:3px solid var(--no)}
+  .box h4{font-family:var(--fd);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;color:var(--ink)}
+  ul.b{margin:0;padding:0;list-style:none}
+  ul.b li{font-size:12.5px;line-height:1.55;color:var(--ink-2);padding:7px 0;border-bottom:1px solid var(--rule-soft);display:flex;gap:9px}
+  ul.b li:last-child{border-bottom:none}
+  ul.b li.sub{padding-left:20px;border-bottom:none;padding-top:2px;color:var(--ink-2);font-size:12px}
+  .box.in ul.b li:not(.sub):before{content:"✓";color:var(--ok);font-weight:700;flex-shrink:0}
+  .box.out ul.b li:not(.sub):before{content:"✕";color:var(--no);font-weight:700;flex-shrink:0}
+  ul.b li.sub:before{content:"–";color:var(--mute);flex-shrink:0}
+  ul.plain li:not(.sub):before{content:"›";color:var(--brand-2);font-weight:600;flex-shrink:0}
+
+  .miro-shell{border:1px solid var(--rule);overflow:hidden;background:var(--panel)}
+  .miro-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px 12px 16px;border-bottom:1px solid var(--rule);background:#FAFCFD;flex-wrap:wrap}
+  .miro-lbl{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:12.5px;font-weight:600;color:var(--ink)}
+  .mi-sm{width:24px;height:24px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;font-weight:700;flex-shrink:0}
+  .miro-bar .btn{margin:0;text-decoration:none;display:inline-block}
+  .miro-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--rule);overflow:hidden;background:#fff}
+  .segb{font-family:var(--fd);font-size:10.5px;font-weight:600;padding:7px 11px;border:0;background:#fff;color:var(--ink-2);cursor:pointer;border-right:1px solid var(--rule)}
+  .segb:last-child{border-right:0}
+  .segb.active{background:var(--brand-lt);color:var(--brand);font-weight:700}
+  .segb:focus-visible{outline:2px solid var(--brand-2);outline-offset:-2px}
+  .miro-foot{padding:10px 16px;border-top:1px solid var(--rule);background:#FAFCFD;font-size:11px;color:var(--mute);line-height:1.55}
+  .miro-stage{position:relative;height:760px;background:#F7F9FA;overflow:hidden}
+  .miro-embed{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+
+  .synced{font-size:10px;color:var(--mute)}
+  .miro-frame{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .miro-load{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;text-align:center;padding:26px;font-size:12.5px;color:var(--ink-2);z-index:1;pointer-events:none}
+  .miro-load .miro-fb{font-size:11px;color:var(--mute);max-width:400px;line-height:1.6;pointer-events:auto}
+  .spin{width:22px;height:22px;border:2.5px solid var(--rule);border-top-color:var(--brand-2);border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none;border-top-color:var(--rule)}}
+  .miro{border:1.5px dashed #C3CCD6;background:linear-gradient(180deg,#FBFCFD,#F2F5F8);padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:11px}
+  .mi{width:42px;height:42px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:15px;font-weight:700}
+  .miro .mt{font-family:var(--fd);font-weight:600;font-size:14px}
+  .miro .ms{font-size:12px;color:var(--ink-2);max-width:440px;line-height:1.6}
+  .btn{margin-top:6px;font-family:var(--fd);font-size:11px;font-weight:600;color:var(--brand);background:#fff;border:1px solid var(--rule);padding:8px 15px;cursor:pointer;transition:border-color .15s}
+  .btn:hover{border-color:var(--brand-2)}
+  .btn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+
+  table.est tr:last-child td{font-weight:600;color:var(--ink);background:#FAFCFD}
+  .note{font-size:11px;color:var(--mute);font-style:italic;margin-top:9px;line-height:1.6}
+
+  table.cvf thead th{background:#F7FAFC}
+  table.cvf td.m{font-weight:600;color:var(--ink);width:22%}
+  table.cvf td.cmt{font-size:11.5px;color:var(--ink-2);line-height:1.5;width:26%}
+  table.cvf td.imp{font-size:11.5px;color:var(--brand);font-weight:600;width:24%}
+  .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ocard{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--brand-2);padding:16px 18px}
+  .ocard .ot{font-family:var(--fd);font-weight:600;font-size:13px;color:var(--ink);margin-bottom:6px;line-height:1.35}
+  .ocard .od{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+  .pend{color:var(--hot);font-weight:600;font-style:normal}
+  .ast{color:var(--no);font-weight:700;font-size:10px;margin-left:2px}
+  .note-red{color:var(--no);background:var(--no-lt);border-left:3px solid var(--no);padding:12px 16px;font-size:11.5px;line-height:1.65;margin:0 0 12px}
+  .kdot.ringed{background:var(--brand-2);box-shadow:0 0 0 1.6px var(--ink)}
+  table.cvf tr.tot td{background:#F7FAFC;font-weight:600;color:var(--ink);border-top:1px solid var(--rule)}
+  .analysis{margin:0;padding:0;list-style:none}
+  .analysis li{display:grid;grid-template-columns:230px 1fr;gap:22px;font-size:13px;line-height:1.7;color:var(--ink-2);padding:15px 0;border-bottom:1px solid var(--rule-soft)}
+  .analysis li:last-child{border-bottom:none}
+  .analysis b{font-family:var(--fd);color:var(--brand);font-weight:700;font-size:13px;line-height:1.45}
+  .rec{background:var(--brand-lt);border-left:3px solid var(--brand);padding:15px 20px;font-size:12.5px;line-height:1.7;color:var(--ink-2);margin:22px 26px 26px}
+  .rec b{font-family:var(--fd);color:var(--brand);font-weight:700}
+  @media(max-width:760px){.ogrid{grid-template-columns:1fr}}
+  .subh{font-family:var(--fd);font-size:13px;font-weight:600;color:var(--ink);margin:26px 0 12px}
+  .vcard .vt{font-family:var(--fd);font-weight:600;font-size:12.5px;color:var(--ink);margin-bottom:5px}
+  .vcard .vd{font-size:12.5px;color:var(--ink-2);line-height:1.55}
+  @media(max-width:760px){table.cvf{display:block;overflow-x:auto;white-space:nowrap}}
+  .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .vcard{background:var(--panel);padding:18px 20px}
+  .vcard h5{font-family:var(--fd);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin:0 0 12px;font-weight:700}
+  .bigval{font-family:var(--fd);font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--brand)}
+  .bigsub{font-size:11.5px;color:var(--ink-2);margin-top:4px}
+
+  .tl{padding:10px 0 2px}
+  .track{position:relative;height:6px;margin:32px 0 0;background:linear-gradient(90deg,var(--brand),var(--brand-3))}
+  .tsep{position:absolute;top:-3px;width:2px;height:12px;background:var(--panel)}
+  .phases{display:flex;position:relative}
+  .ph{text-align:center;min-width:0;padding:0 6px}
+  .ph .dot{width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--brand);margin:-16px auto 10px}
+  .ph .pn{font-family:var(--fd);font-weight:700;font-size:13px;line-height:1.3;overflow-wrap:anywhere;color:var(--ink)}
+  .ph .pw{font-size:10.5px;color:var(--brand-2);margin-top:3px;font-weight:600}
+  .ph .pd{font-size:10px;color:var(--mute);margin-top:2px}
+  @media(max-width:700px){.ph .pn{font-size:11px}.ph .pw,.ph .pd{font-size:9px}}
+
+  .evbox{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--brand-2);padding:16px 19px}
+  .evbox.pending{border-left-color:var(--hot)}
+  .evbox .eh{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:7px}
+  .evbox p{margin:0;font-size:13px;line-height:1.65;color:var(--ink-2)}
+
+  .pager{display:flex;justify-content:space-between;gap:12px;padding-top:26px;border-top:1px solid var(--rule)}
+  .pbtn{font-size:12.5px;color:var(--brand);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:600;padding:6px 2px}
+  .pbtn:hover{text-decoration:underline}
+  .pbtn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+  .pbtn:disabled{color:var(--mute);cursor:default;text-decoration:none}
+
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:#C6CEDA;border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  @media(max-width:1040px){.band{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:1000px){.qf{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:860px){
+    body{flex-direction:column}
+    .sidebar{position:relative;width:100%;flex:none;height:auto}
+    .shell{padding:26px 18px 60px}.topbar{padding:12px 18px}.mast-in{padding:0 18px;flex-wrap:wrap}
+    .mast-side{text-align:left}
+    h1.t{font-size:29px}h2.ex-title{font-size:18px}
+    .two,.vgrid{grid-template-columns:1fr}
+    .qf,.band{grid-template-columns:1fr}
+    .analysis li{grid-template-columns:1fr;gap:6px}
+    .tbl-wrap{overflow-x:auto}table.rank{min-width:800px}
+  }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">
+    <div class="eyebrow">Genzeon &times; Aspirus Health</div>
+    <h1>Aspirus Health<br>Automation Prioritization</h1>
+  </div>
+  <div class="navlabel">Contents</div>
+  <nav id="nav"></nav>
+  <div class="sfoot">
+    <b>Prepared by</b> Genzeon
+  </div>
+</aside>
+<main id="main"></main>
+
+
+<script>
+let UC=[], ALL=[]; // populated by loadData() from /api/data after login
+
+const usd = n => '$' + n.toLocaleString('en-US');
+const usdK = n => n >= 1000000 ? '$' + (n/1000000).toFixed(2).replace(/\.?0+$/,'') + 'M' : '$' + Math.round(n/1000) + 'K';
+
+/* ---------- CHART TOOLTIP ----------
+   One shared floating tooltip for every SVG chart on the page. Content is
+   built from our own trusted data (never raw user input), same as the rest
+   of this file's innerHTML usage. */
+function vizTipEl(){
+  let el = document.getElementById('viz-tt');
+  if(!el){ el = document.createElement('div'); el.id = 'viz-tt'; el.className = 'viz-tt'; document.body.appendChild(el); }
+  return el;
+}
+function showTip(evt, html){
+  const el = vizTipEl();
+  el.innerHTML = html;
+  el.style.display = 'block';
+  moveTip(evt);
+}
+function escAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function moveTip(evt){
+  const el = document.getElementById('viz-tt'); if(!el || el.style.display==='none') return;
+  const pad = 16, r = el.getBoundingClientRect();
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if(x + r.width > window.innerWidth - 8) x = evt.clientX - r.width - pad;
+  if(y + r.height > window.innerHeight - 8) y = evt.clientY - r.height - pad;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+}
+function hideTip(){ const el = document.getElementById('viz-tt'); if(el) el.style.display = 'none'; }
+
+/* ---------- VALUE vs EFFORT QUADRANT MATRIX ----------
+   Y = annual business value, broken axis (Care Gap is a 6x outlier).
+   X = ROM investment. Zones split at the median value/ROM across the 9
+   quantified use cases. Bubble colour = zone (validated categorical:
+   green/blue/violet/red, worst all-pairs normal-vision ΔE 15.8). Dark
+   ring = detailed assessment complete. */
+const QCOLOR = {qw:'#1B8A5A', sb:'#2B5CE0', fi:'#8B6BAE', dp:'#C0392B'};
+const QLABEL = {qw:'Quick wins', sb:'Strategic bets', fi:'Fill-ins', dp:'Deprioritize'};
+function quadrantPts(){ return ALL.filter(a=>!a.valuePending && a.rom); }
+function quadrantMedians(){
+  const mid = arr => { const s=[...arr].sort((x,y)=>x-y), n=s.length;
+    return n%2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2; };
+  const pts = quadrantPts();
+  return { value: mid(pts.map(a=>a.value)), rom: mid(pts.map(a=>a.rom)) };
+}
+function quadrantOf(a, med){
+  return a.value>=med.value ? (a.rom<=med.rom?'qw':'sb') : (a.rom<=med.rom?'fi':'dp');
+}
+function matrix(){
+  const med = quadrantMedians();
+  const pts = quadrantPts().sort((a,b)=>b.value-a.value);
+  const W=580,H=400,L=76,R=26,T=26,B=52;
+  const px=W-L-R, py=H-T-B;
+  const LOW_MAX=450000, HI_MIN=1900000, HI_MAX=2000000;
+  const LOW_FRAC=.62, GAP_FRAC=.12;
+  const yv=v=> v<=LOW_MAX ? T+py-(v/LOW_MAX)*(py*LOW_FRAC)
+    : T+py-py*(LOW_FRAC+GAP_FRAC)-((v-HI_MIN)/(HI_MAX-HI_MIN))*(py*(1-LOW_FRAC-GAP_FRAC));
+  const XMIN=95000, XMAX=170000;
+  const xv=v=>L+((v-XMIN)/(XMAX-XMIN))*px;
+  const medX=xv(med.rom), medY=yv(med.value);
+  let g='';
+  g+=`<rect x="${L}" y="${T}" width="${medX-L}" height="${medY-T}" fill="${QCOLOR.qw}" fill-opacity=".055"/>
+      <rect x="${medX}" y="${T}" width="${L+px-medX}" height="${medY-T}" fill="${QCOLOR.sb}" fill-opacity=".055"/>
+      <rect x="${L}" y="${medY}" width="${medX-L}" height="${T+py-medY}" fill="${QCOLOR.fi}" fill-opacity=".045"/>
+      <rect x="${medX}" y="${medY}" width="${L+px-medX}" height="${T+py-medY}" fill="${QCOLOR.dp}" fill-opacity=".055"/>
+      <text x="${L+8}" y="${T+16}" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.qw}">QUICK WINS</text>
+      <text x="${L+px-8}" y="${T+16}" text-anchor="end" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.sb}">STRATEGIC BETS</text>
+      <text x="${L+8}" y="${T+py-9}" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.fi}">FILL-INS</text>
+      <text x="${L+px-8}" y="${T+py-9}" text-anchor="end" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.dp}">DEPRIORITIZE</text>`;
+  [0,150000,300000,450000].forEach(v=>{const y=yv(v);
+    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">${v?'$'+v/1000+'K':'0'}</text>`;});
+  [1950000].forEach(v=>{const y=yv(v);
+    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">$1.95M</text>`;});
+  const by=T+py-py*(LOW_FRAC+GAP_FRAC/2);
+  g+=`<path d="M${L-6},${by+7} l7,-5 l-7,-5" fill="none" stroke="#A9B6C6" stroke-width="1.3"/><path d="M${L-6},${by+1} l7,-5 l-7,-5" fill="none" stroke="#A9B6C6" stroke-width="1.3"/>`;
+  [100000,120000,140000,160000].forEach(v=>{const x=xv(v);
+    g+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+py}" stroke="#F2F4F7"/><text x="${x}" y="${T+py+18}" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#78859A">$${v/1000}K</text>`;});
+  g+=`<line x1="${medX}" y1="${T}" x2="${medX}" y2="${T+py}" stroke="#B9C4D2" stroke-dasharray="4,4"/>
+      <line x1="${L}" y1="${medY}" x2="${L+px}" y2="${medY}" stroke="#B9C4D2" stroke-dasharray="4,4"/>`;
+  g+=`<line x1="${L}" y1="${T+py}" x2="${L+px}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
+      <line x1="${L}" y1="${T}" x2="${L}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
+      <text x="${L+px/2}" y="${H-9}" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ROM INVESTMENT &#8594;</text>
+      <text transform="translate(15,${T+py/2}) rotate(-90)" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ANNUAL BUSINESS VALUE &#8594;</text>`;
+  pts.forEach(a=>{
+    const x=xv(a.rom), y=yv(a.value), q=quadrantOf(a,med), c=QCOLOR[q];
+    const tip = `<div class="tt-h">${a.name}</div>
+      <div class="tt-r"><span class="tt-k" style="background:${c}"></span>${QLABEL[q]}</div>
+      <div class="tt-r">Annual value<b>${usdK(a.value)}</b></div>
+      <div class="tt-r">ROM investment<b>${usdK(a.rom)}</b></div>
+      ${a.page?`<div class="tt-tag">${a.priority==='Pending'?'Select for detail':'Click for full assessment'}</div>`:''}`;
+    g+=`<g class="qdot" tabindex="0" role="button" aria-label="${a.name}, ${QLABEL[q]}, ${usdK(a.value)} value, ${usdK(a.rom)} ROM"
+          data-tip="${escAttr(tip)}"
+          onmouseenter="showTip(event,this.dataset.tip)" onmousemove="moveTip(event)" onmouseleave="hideTip()"
+          onfocus="showTip(event,this.dataset.tip)" onblur="hideTip()"
+          ${a.page?`onclick="go('${a.page}')" onkeypress="if(event.key==='Enter')go('${a.page}')"`:''}>
+          <circle cx="${x}" cy="${y}" r="17" fill="${c}" fill-opacity=".1"/>
+          <circle cx="${x}" cy="${y}" r="8.5" fill="#fff"/>
+          <circle class="hit" cx="${x}" cy="${y}" r="7" fill="${c}" stroke="${a.page?'#0F1B2D':'none'}" stroke-width="${a.page?1.6:0}"/>
+          <text x="${x+13}" y="${y-3}" font-family="Archivo" font-size="11" font-weight="700" fill="#0F1B2D">${a.id.replace('UC','')}</text>
+          <text x="${x+13+(a.id.replace('UC','').length>1?18:12)}" y="${y-3}" font-family="Inter" font-size="9" fill="#3A485C">(${usdK(a.value)}, ${usdK(a.rom)})</text>
+        </g>`;});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Value versus investment quadrant matrix">${g}</svg>`;
+}
+
+/* ---------- CUMULATIVE VALUE REALIZATION ----------
+   Bars carry cumulative ROM spend (left axis), the line carries cumulative
+   business value (right axis), sequenced by payback and grouped into three
+   delivery stages (same order as the Ranked comparison table). */
+function cumulativeChart(pts){
+  const W=680,H=340,L=58,R=58,T=26,B=48;
+  const px=W-L-R, py=H-T-B;
+  const n=pts.length;
+  const gap = px/n, barW = gap*0.56;
+  const xCenter = i => L+gap*i+gap/2;
+  const maxROM = Math.max(100000, Math.ceil(pts[n-1].cR*1.15/100000)*100000);
+  const maxVal = Math.max(250000, Math.ceil(pts[n-1].cV*1.15/250000)*250000);
+  const yL = v => T+py-(v/maxROM)*py;
+  const yR = v => T+py-(v/maxVal)*py;
+  const breakevenIdx = pts.findIndex(p=>p.cV>=p.cR);
+
+  const STAGE_LABEL = {P1:'Quick wins', P2:'Positive return', P3:'Longer payback'};
+  const STAGE_COLOR = {P1:'var(--brand)', P2:'var(--brand-2)', P3:'var(--brand-3)'};
+  const STAGE_TEXT = {P1:'#fff', P2:'#fff', P3:'var(--ink)'};
+
+  const stages=[];
+  pts.forEach((p,i)=>{
+    const last=stages[stages.length-1];
+    if(last && last.priority===p.priority){ last.count++; last.cR=p.cR; last.cV=p.cV; }
+    else stages.push({priority:p.priority, count:1, cR:p.cR, cV:p.cV});
+  });
+  const stageStripInner = stages.map((s,idx)=>{
+    const widthPct = (s.count/n*100).toFixed(2);
+    const mult = s.cR ? s.cV/s.cR : 0;
+    return `<div style="width:${widthPct}%;background:${STAGE_COLOR[s.priority]};color:${STAGE_TEXT[s.priority]};padding:8px 12px">
+      <div style="font-family:var(--fd);font-weight:700;font-size:12.5px;letter-spacing:-.01em">Stage ${idx+1} &middot; ${STAGE_LABEL[s.priority]||s.priority}</div>
+      <div style="font-size:11px;margin-top:2px;font-variant-numeric:tabular-nums lining-nums;opacity:.85">Cumulative return ${mult.toFixed(1)}&times;</div>
+    </div>`;
+  }).join('');
+  // spacer widths mirror the SVG's own L/R margins so the strip lines up with the plot area
+  const leftPct = (L/W*100).toFixed(3), rightPct = (R/W*100).toFixed(3);
+  const stageStrip = `<div style="flex:0 0 ${leftPct}%"></div>
+    <div style="flex:1;min-width:0;display:flex;gap:1px;background:var(--rule)">${stageStripInner}</div>
+    <div style="flex:0 0 ${rightPct}%"></div>`;
+
+  let g='';
+  for(let k=0;k<=4;k++){
+    const frac=k/4, y=T+py-frac*py;
+    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/>
+        <text x="${L-8}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">${usdK(frac*maxROM)}</text>
+        <text x="${L+px+8}" y="${y+3.5}" text-anchor="start" font-family="Inter" font-size="9.5" fill="#78859A">${usdK(frac*maxVal)}</text>`;
+  }
+  g+=`<line x1="${L}" y1="${T+py}" x2="${L+px}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
+      <text x="${L-8}" y="${T+py+30}" text-anchor="end" font-family="Archivo" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">SPEND &#8593;</text>
+      <text x="${L+px+8}" y="${T+py+30}" text-anchor="start" font-family="Archivo" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">&#8593; VALUE</text>`;
+
+  pts.forEach((p,i)=>{
+    const x = L+gap*i+(gap-barW)/2;
+    const barH = (p.cR/maxROM)*py;
+    const stepRom = i>0 ? p.cR-pts[i-1].cR : p.cR, stepValue = i>0 ? p.cV-pts[i-1].cV : p.cV;
+    const tip = `<div class="tt-h">${p.name}</div>
+      <div class="tt-r"><span class="tt-k" style="background:${STAGE_COLOR[p.priority]}"></span>Cumulative ROM<b>${usdK(p.cR)}</b></div>
+      <div class="tt-r"><span class="tt-k" style="background:#0F1B2D"></span>Cumulative value<b>${usdK(p.cV)}</b></div>
+      <div class="tt-tag">#${i+1} in sequence &middot; adds ${usdK(stepRom)} ROM, ${usdK(stepValue)} value</div>`;
+    g+=`<g class="vpt" tabindex="0" aria-label="${p.name}: cumulative ROM ${usdK(p.cR)}, cumulative value ${usdK(p.cV)}"
+          data-tip="${escAttr(tip)}"
+          onmouseenter="showTip(event,this.dataset.tip)" onmousemove="moveTip(event)" onmouseleave="hideTip()"
+          onfocus="showTip(event,this.dataset.tip)" onblur="hideTip()">
+        <rect x="${x}" y="${T}" width="${barW}" height="${py}" fill="transparent"/>
+        <rect x="${x}" y="${T+py-barH}" width="${barW}" height="${barH}" fill="${STAGE_COLOR[p.priority]}"/>
+        <circle cx="${xCenter(i)}" cy="${yR(p.cV)}" r="10" fill="transparent"/>
+        <text x="${x+barW/2}" y="${T+py+16}" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#78859A">${p.id.replace('UC','')}</text>
+      </g>`;
+  });
+
+  const linePath = pts.map((p,i)=>`${i?'L':'M'}${xCenter(i)},${yR(p.cV)}`).join(' ');
+  g+=`<path d="${linePath}" fill="none" stroke="#0F1B2D" stroke-width="1.4" stroke-linejoin="round"/>`;
+  const mk=4; // marker half-side, square points instead of circles
+  pts.forEach((p,i)=>{ const mx=xCenter(i), my=yR(p.cV); g+=`<rect x="${mx-mk}" y="${my-mk}" width="${mk*2}" height="${mk*2}" fill="#0F1B2D"/>`; });
+
+  if(breakevenIdx>=0){
+    const bx=xCenter(breakevenIdx);
+    g+=`<line x1="${bx}" y1="${T}" x2="${bx}" y2="${T+py}" stroke="#B5641E" stroke-dasharray="4,3"/>
+        <text x="${bx+6}" y="${T+13}" font-family="Archivo" font-size="9" font-weight="700" letter-spacing="1.1" fill="#B5641E">BREAKEVEN AT USE CASE ${breakevenIdx+1}</text>`;
+  }
+  g+=`<text x="${L+px/2}" y="${H-4}" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">USE CASES SEQUENCED BY PAYBACK &#8594;</text>`;
+
+  const legend = `<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-top:1px solid var(--rule-soft);padding-top:12px;margin-top:10px;font-size:12px;color:var(--ink-2)">
+    <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:var(--brand-2);flex:none"></span>Cumulative ROM spend &mdash; left axis</div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:2px;background:#0F1B2D;flex:none"></span>Cumulative business value &mdash; right axis</div>
+    <div style="color:var(--mute)">Bar shade marks the delivery stage; the multiple above each stage is cumulative value over cumulative ROM at that point in the sequence.</div>
+  </div>`;
+
+  return `<div style="display:flex;margin-bottom:18px">${stageStrip}</div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Cumulative ROM investment versus cumulative business value, sequenced by payback and delivery stage">${g}</svg>
+    ${legend}`;
+}
+
+/* ---------- SUMMARY ---------- */
+function summary(){
+  const maxVal = Math.max(...ALL.filter(a=>!a.valuePending).map(a=>a.value));
+  const tierColor = {P1:'var(--brand)', P2:'var(--brand-2)', P3:'var(--brand-3)'};
+  const rows = ALL.map((a,i)=>`
+    <tr class="${a.page?'clickable':''}" ${a.page?`onclick="go('${a.page}')"`:''}>
+      <td class="mono" style="color:var(--mute)">${a.id.replace('UC','')}</td>
+      <td><div class="ucname">${a.name}${a.id==='UC6'?'<sup class="ast">**</sup>':''}</div></td>
+      <td class="r">${a.valuePending?'<span class="pend">Pending</span>':`
+        <div class="vbar">
+          <div class="vbar-fill" style="width:${(a.value/maxVal*100).toFixed(1)}%;background:${tierColor[a.priority]||'var(--mute)'}"></div>
+          <span class="vbar-val" style="color:${a.value===maxVal?'#fff':'var(--ink)'}">${usdK(a.value)}</span>
+        </div>`}</td>
+      <td class="r mono">${usdK(a.rom)}</td>
+      <td class="r mono">${a.payback?a.payback+' mo':'<span class="pend">-</span>'}</td>
+      <td class="r mono">${a.net===null?'<span class="pend">-</span>':(a.net<0?`<span class="neg">-${usdK(Math.abs(a.net))}</span>`:usdK(a.net))}</td>
+      <td class="mono" style="font-size:11.5px">${a.timeline}</td>
+      <td style="font-size:11.5px">${a.complexity}</td>
+      <td><span class="tier ${a.priority}">${a.priority}</span></td>
+    </tr>`).join('');
+
+  const quantified = ALL.filter(a=>!a.valuePending);
+  const totV = quantified.reduce((s,a)=>s+a.value,0);
+  const totR = ALL.reduce((s,a)=>s+(a.rom||0),0);
+  const ranked = [...quantified].sort((a,b)=>a.payback-b.payback);
+
+  const qMed = quadrantMedians();
+  const qGroups = {qw:[],sb:[],fi:[],dp:[]};
+  quadrantPts().forEach(a=>qGroups[quadrantOf(a,qMed)].push(a));
+  const qPending = ALL.filter(a=>a.valuePending);
+  const qPendingROM = qPending.reduce((s,a)=>s+(a.rom||0),0);
+
+  let cR=0, cV=0;
+  const cumPts = ranked.map(a=>{ cR+=a.rom; cV+=a.value; return {...a, cR, cV}; });
+  const roiMultiple = totR ? (totV/totR) : 0;
+  const breakevenIdx = cumPts.findIndex(c=>c.cV>=c.cR);
+
+  return `<div class="masthead"><div class="mast-in">
+    <div>
+      <div class="eyebrow">Automation prioritization - business value assessment</div>
+      <h1 class="t">Aspirus Health Automation Prioritization</h1>
+      <p class="lede">Ten automation candidates assessed across the Aspirus operating model. Business value, ROM investment and delivery estimates are drawn from the Business Value Prioritization model. All ten have completed detailed discovery and carry full assessments.</p>
+    </div>
+    <div class="mast-side">
+      <div class="eyebrow">Prepared for</div>
+      <div style="color:#fff;font-weight:600;font-size:13px;margin-top:4px">Randall Sanborn</div>
+      <div>VP, System IT Process and Emerging Technologies, Aspirus Health</div>
+    </div>
+  </div></div>
+
+  <div class="shell">
+
+    <div class="band">
+      <div class="bcell"><div class="n">${usdK(totV)}</div><div class="l">Combined annual value, quantified use cases</div></div>
+      <div class="bcell"><div class="n">${usdK(totR)}</div><div class="l">Combined ROM investment, all ten</div></div>
+      <div class="bcell"><div class="n">${quantified.length} of ${ALL.length}</div><div class="l">Quantified to date</div></div>
+      <div class="bcell"><div class="n">10</div><div class="l">With detailed assessment</div></div>
+    </div>
+
+    <div class="exhibit">
+      <div class="ex-head">
+        <span class="ex-no">01</span>
+        <div>
+          <div class="ex-label">Prioritization &middot; value vs. investment</div>
+          <h2 class="ex-title">One quick win, four strategic bets, and one case that cannot yet be placed</h2>
+          <p class="ex-sub">Annual business value against ROM investment for the nine quantified use cases. Quadrants split at the median - ${usdK(qMed.value)} value, ${usdK(qMed.rom)} investment.</p>
+        </div>
+      </div>
+      <div class="ex-body">
+        <div class="flag">Prior Authorization Support is excluded from the chart - annual value is pending Aspirus volume metrics</div>
+        <div class="mx">
+          <div class="mxsvg">${matrix()}</div>
+          <div class="mxkey">
+            ${['qw','sb','fi','dp'].filter(k=>qGroups[k].length).map(k=>`
+            <div class="kgrp">
+              <div class="kh">${QLABEL[k]}</div>
+              ${qGroups[k].sort((a,b)=>b.value-a.value).map(a=>`<div class="krow"><span class="kdot" style="background:${QCOLOR[k]}"></span><span><span class="knum mono">${a.id.replace('UC','')}</span> ${a.name}${a.id==='UC6'?'<sup class="ast">**</sup>':''}</span></div>`).join('')}
+            </div>`).join('')}
+            ${qPending.length?`
+            <div class="kgrp">
+              <div class="kh">Pending</div>
+              ${qPending.map(a=>`<div class="krow"><span class="kdot" style="background:#B9C4D2"></span><span><span class="knum mono">${a.id.replace('UC','')}</span> ${a.name}</span></div>`).join('')}
+            </div>`:''}
+            <div class="kgrp">
+              <div class="kh">Reading the chart</div>
+              <div class="krow"><span class="kdot ringed"></span><span>Ringed = detailed assessment complete</span></div>
+              <span class="kread">Zones split at the median across the 9 quantified use cases - ${usdK(qMed.value)} value, ${usdK(qMed.rom)} ROM. The value axis is broken; Care Gap sits far above the rest. Hover a bubble for exact figures.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exhibit">
+      <div class="ex-head">
+        <span class="ex-no">02</span>
+        <div>
+          <div class="ex-label">Ranked comparison &middot; decision summary</div>
+          <h2 class="ex-title">Six of the nine quantified cases pay back inside nine months</h2>
+          <p class="ex-sub">All ten use cases ranked by recommended priority. Priority is derived from payback - P1 under five months, P2 five to nine, P3 beyond nine or no year-one return.</p>
+        </div>
+      </div>
+      <div class="ex-body flush">
+        <div class="tbl-wrap">
+          <table class="rank">
+            <thead><tr>
+              <th style="width:26px">#</th><th>Use case</th><th class="r" style="width:230px">Annual value</th><th class="r">ROM</th>
+              <th class="r">Payback</th><th class="r">Year-one net</th><th>Timeline</th><th>Complexity</th><th class="r">Priority</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p class="note-red" style="margin:0"><b>**</b> UC6 - Chart Abstracting is contract-based (Savista) and outsourced to a vendor; value is framed as capacity and time-savings, not direct cost takeout.</p>
+        <p class="foot-note">Payback = ROM investment divided by annual business value. Figures are drawn from the Business Value Prioritization model. Recommended priority is derived from payback: P1 under 5 months, P2 five to nine months, P3 over nine months or no year-one return. All ten use cases have detailed assessments - select any row for full scope, workflow and delivery detail.</p>
+      </div>
+    </div>
+
+    <div class="exhibit">
+      <div class="ex-head">
+        <span class="ex-no">03</span>
+        <div>
+          <div class="ex-label">Value realization &middot; cumulative investment vs. value</div>
+          <h2 class="ex-title">The portfolio breaks even on the first use case</h2>
+          <p class="ex-sub">Bars carry cumulative ROM spend, the line carries cumulative business value. Each step adds one more use case in payback order - the axis is a sequence, not a calendar.</p>
+        </div>
+      </div>
+      <div class="ex-body flush">
+        <div class="band" style="margin:0;border-bottom:1px solid var(--rule)">
+          <div class="bcell"><div class="n">${usdK(totR)}</div><div class="l">Total ROM investment, all ten</div></div>
+          <div class="bcell"><div class="n">${usdK(totV)}</div><div class="l">Total year-one value, 9 quantified</div></div>
+          <div class="bcell"><div class="n">${roiMultiple.toFixed(1)}&times;</div><div class="l">Resulting year-one ROI multiple</div></div>
+          <div class="bcell"><div class="n">${breakevenIdx>=0?'#'+(breakevenIdx+1):'-'}</div><div class="l">${breakevenIdx>=0?cumPts[breakevenIdx].name+' - value overtakes investment':'Not yet reached'}</div></div>
+        </div>
+        <div style="padding:26px">
+          ${cumulativeChart(cumPts)}
+          <p class="foot-note" style="margin:14px 0 0">Hover a point on the chart for that use case's exact figures.${qPending.length?` ${qPending.map(a=>a.name).join(', ')} - ${usdK(qPendingROM)} ROM - ${qPending.length>1?'are':'is'} not sequenced above; annual value is still pending Aspirus volume metrics.`:''}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="exhibit">
+      <div class="ex-head">
+        <span class="ex-no">04</span>
+        <div>
+          <div class="ex-label">Interpretation</div>
+          <h2 class="ex-title">What the numbers say</h2>
+          <p class="ex-sub">Six findings that follow from the assessment, and the sequence we recommend on the strength of them.</p>
+        </div>
+      </div>
+      <div class="ex-body">
+        <ul class="analysis">
+          <li><b>Care Gap Identification is the portfolio.</b><span>At ${usdK(1943910)} it represents just over half the total quantified value across all ten use cases, from a modelled 20.7 FTE capacity release. It should be sequenced first on value alone.</span></li>
+          <li><b>Chart Abstracting delivers the next strongest return.</b><span>${usdK(416000)} against ${usdK(141000)}, a ${ranked.find(a=>a.id==='UC6').payback}-month payback. Note this is capacity value against an outsourced Savista contract, not direct cost takeout.</span></li>
+          <li><b>Inbound Fax Routing is the most efficient quick win.</b><span>${usdK(374000)} for ${usdK(124092)} at ${ranked.find(a=>a.id==='UC3').payback} months and Low complexity - the only Low-complexity item in the portfolio.</span></li>
+          <li><b>Four use cases return under $60K in year one.</b><span>Referral Intake, Provider Enrollment, Invoice Processing and Claims Submission all carry paybacks of 7.8 months or longer. They remain positive but should follow the leaders.</span></li>
+          <li><b>Computer System Access does not currently pay back.</b><span>At ${usdK(98100)} against ${usdK(125000)} it is the only quantified use case with a negative year-one net. It needs rescoping or deferral unless there is a compliance driver outside this model.</span></li>
+          <li><b>Prior Authorization Support cannot yet be ranked.</b><span>ROM is estimated at ${usdK(132600)} but annual value remains pending Aspirus volume metrics. It is the largest open question in the portfolio.</span></li>
+        </ul>
+      </div>
+      <p class="rec"><b>Recommended sequence:</b> Care Gap Identification, then Chart Abstracting and Inbound Fax Routing in parallel. Confirm Prior Authorization volumetrics before committing further.</p>
+    </div>
+
+  </div>`;
+}
+
+/* ---------- DETAIL ---------- */
+function li(items, cls){
+  return items.map(([k,t])=>`<li class="${k==='sub'?'sub':''}">${k==='sub'?'':''}${t}</li>`).join('');
+}
+function exhibit(no, label, title, bodyHtml, flush){
+  return `<div class="exhibit">
+    <div class="ex-head">
+      <span class="ex-no">${no}</span>
+      <div><div class="ex-label">${label}</div><h2 class="ex-title">${title}</h2></div>
+    </div>
+    <div class="ex-body${flush?' flush':''}">${bodyHtml}</div>
+  </div>`;
+}
+function detail(u, idx){
+  let acc=0;
+  const seps=u.phases.slice(0,-1).map(p=>{acc+=p.pct;return `<span class="tsep" style="left:calc(${acc}% - 1px)"></span>`}).join('');
+  const phaseCells=u.phases.map(p=>`
+    <div class="ph" style="flex:${p.pct} 1 0%">
+      <div class="dot"></div><div class="pn">${p.label}</div>
+      <div class="pw">W${p.start}${p.weeks>1?'\u2013'+p.end:''}</div><div class="pd">${p.weeks}w</div>
+    </div>`).join('');
+  const card = c => `<div class="ocard"><div class="ot">${c.title}</div><div class="od">${c.body}</div></div>`;
+
+  return `<div class="shell">
+    <div class="dhead">
+      <div>
+        <div class="eyebrow">Use case ${u.num} of ${String(UC.length).padStart(2,'0')} &nbsp;&middot;&nbsp; ${u.area} &nbsp;&middot;&nbsp; ${u.bvpId}</div>
+        <h1 class="dt">${u.name}</h1>
+        <p class="dframe">${u.summary}</p>
+      </div>
+      ${u.valuePending?'<div class="tierlg P2">Value pending</div>':''}
+    </div>
+
+    <div class="qf">
+      <div class="qfc"><div class="k">Annual value</div><div class="v">${u.valuePending?'<span class="pend">Pending</span>':u.valueLabel}</div>${u.valuePending?'<div class="vsub">awaiting volume metrics</div>':''}</div>
+      <div class="qfc"><div class="k">ROM investment</div><div class="v">${u.romLabel}</div></div>
+      <div class="qfc"><div class="k">Payback</div><div class="v">${u.payback?u.payback+' months':'<span class="pend">Pending</span>'}</div></div>
+      <div class="qfc"><div class="k">Timeline</div><div class="v">${u.timeline}</div></div>
+      <div class="qfc"><div class="k">Complexity</div><div class="v">${u.complexity}</div></div>
+    </div>
+
+    ${exhibit('01','Opportunity','Automation opportunity', `
+      ${u.objective?`<p class="body" style="margin-bottom:16px"><b>Objective:</b> ${u.objective}</p>`:''}
+      <div class="ogrid">${u.opportunity.map(card).join('')}</div>`)}
+
+    ${exhibit('02','Boundaries','Scope and out of scope', `
+      <div class="two">
+        <div class="box in"><h4>In scope</h4><ul class="b">${li(u.inScope)}</ul></div>
+        <div class="box out"><h4>Out of scope</h4><ul class="b">${li(u.outScope)}</ul></div>
+      </div>`)}
+
+    ${exhibit('03','Current State','Workflow', `
+      ${u.miro ? `<div class="miro-shell">
+        <div class="miro-bar">
+          <div class="miro-lbl"><span class="mi-sm">M</span> Current-state workflow - ${u.name}</div>
+          <div class="miro-actions">
+            <div class="seg" role="group" aria-label="Board zoom">
+              <button class="segb active" id="seg-read-${u.id}" onclick="setMode('${u.id}','read')">Readable</button>
+              <button class="segb" id="seg-fit-${u.id}" onclick="setMode('${u.id}','fit')">Whole frame</button>
+            </div>
+            <a class="btn" href="${u.miro}" target="_blank" rel="noopener noreferrer">Open in Miro &#8599;</a>
+          </div>
+        </div>
+        <div class="miro-stage" id="stage-${u.id}">
+          <div class="miro-load" id="load-${u.id}">
+            <div class="spin"></div><div>Loading board&hellip;</div>
+            <div class="miro-fb">If a Miro sign-in card appears instead of the diagram, this page is running from a local file. Serve it over http, or open the board directly using the link above.</div>
+          </div>
+          <iframe class="miro-embed" id="emb-${u.id}" data-read="${u.read}" data-fit="${u.fit}"
+            title="Miro board - ${u.name}" frameborder="0" scrolling="no"
+            allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen
+            onload="document.getElementById('load-${u.id}').style.display='none'"></iframe>
+        </div>
+        <div class="miro-foot">Scroll to zoom and drag to pan inside the board.</div>
+      </div>` : `<div class="miro">
+        <div class="mi">M</div>
+        <div class="mt">Workflow diagram not yet available</div>
+        <div class="ms">A current-state workflow board has not been built for this use case yet. It will be added here once discovery mapping is complete.</div>
+      </div>`}
+      <div class="box" style="margin-top:16px"><h4>Current challenge</h4><ul class="b plain">${li(u.challenge)}</ul></div>`)}
+
+    ${exhibit('04','Solution','Workflow', `
+      ${u.solutionMiro ? `<div class="miro-shell">
+        <div class="miro-bar">
+          <div class="miro-lbl"><span class="mi-sm">M</span> Solution workflow - ${u.name}</div>
+          <div class="miro-actions">
+            <div class="seg" role="group" aria-label="Board zoom">
+              <button class="segb active" id="seg-read-${u.id}-sol" onclick="setMode('${u.id}-sol','read')">Readable</button>
+              <button class="segb" id="seg-fit-${u.id}-sol" onclick="setMode('${u.id}-sol','fit')">Whole frame</button>
+            </div>
+            <a class="btn" href="${u.solutionMiro}" target="_blank" rel="noopener noreferrer">Open in Miro &#8599;</a>
+          </div>
+        </div>
+        <div class="miro-stage" id="stage-${u.id}-sol">
+          <div class="miro-load" id="load-${u.id}-sol">
+            <div class="spin"></div><div>Loading board&hellip;</div>
+            <div class="miro-fb">If a Miro sign-in card appears instead of the diagram, this page is running from a local file. Serve it over http, or open the board directly using the link above.</div>
+          </div>
+          <iframe class="miro-embed" id="emb-${u.id}-sol" data-read="${u.solutionRead}" data-fit="${u.solutionFit}"
+            title="Solution Miro board - ${u.name}" frameborder="0" scrolling="no"
+            allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen
+            onload="document.getElementById('load-${u.id}-sol').style.display='none'"></iframe>
+        </div>
+        <div class="miro-foot">Scroll to zoom and drag to pan inside the board.</div>
+      </div>` : `<div class="miro">
+        <div class="mi">M</div>
+        <div class="mt">Solution diagram not yet available</div>
+        <div class="ms">A solution workflow board has not been built for this use case yet. It will be added here once solutioning is complete.</div>
+      </div>`}`)}
+
+    ${exhibit('05','Basis of estimate','Key inputs used in business value calculation', `
+      <table class="cvf">
+        <thead><tr><th>Key input</th><th>Assumption / value</th><th>Source / note</th></tr></thead>
+        <tbody>${u.keyInputs.map(k=>`<tr><td class="m">${k.input}</td><td class="mono">${k.value||'<span class="pend">TBD</span>'}</td><td>${k.source}</td></tr>`).join('')}</tbody>
+      </table>`, true)}
+
+    ${exhibit('06','Impact model','Business value estimates', `
+      <table class="cvf">
+        <thead><tr><th>Category</th><th>Pre-automation (manual)</th><th>Post-automation</th><th>Value impact / year</th>${u.bvHasComment?'<th>Comment</th>':''}</tr></thead>
+        <tbody>${u.valueEstimates.map(r=>`<tr><td class="m">${r.cat}</td><td>${r.pre}</td><td>${r.post}</td><td class="imp">${r.impact}</td>${u.bvHasComment?`<td class="cmt">${r.comment||''}</td>`:''}</tr>`).join('')}
+        <tr class="tot"><td class="m">Total estimated annual value</td><td></td><td></td><td class="imp">${u.valuePending?'<span class="pend">Pending</span>':u.valueLabel}</td>${u.bvHasComment?'<td></td>':''}</tr></tbody>
+      </table>
+      ${u.valuePending?'<p class="note">Figures cannot be modelled until annual PA volume, handling time and staffing mix are received from Aspirus.</p>':''}`, true)}
+
+    ${exhibit('07','Delivery','Estimate', `
+      <table class="est">
+        <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Annual business value</td><td class="mono">${u.valuePending?'<span class="pend">Pending</span>':u.valueLabel}</td></tr>
+          <tr><td>ROM investment</td><td class="mono">${u.romLabel}</td></tr>
+          <tr><td>Implementation timeline</td><td class="mono">${u.timeline}</td></tr>
+          <tr><td>Complexity</td><td class="mono">${u.complexity}</td></tr>
+          <tr><td>Year-one net</td><td class="mono">${u.netLabel}</td></tr>
+        </tbody>
+      </table>
+      <p class="note">ROM investment and timeline are drawn from the process estimation model (hybrid onshore/offshore) and will be confirmed at contracting.</p>`, true)}
+
+    ${exhibit('08','Rationale','Expected business outcomes', `<div class="ogrid">${u.outcomes.map(card).join('')}</div>`)}
+
+    ${exhibit('09','Sequencing','Timeline', `
+      <div class="tl"><div class="track">${seps}</div><div class="phases">${phaseCells}</div></div>
+      <p class="note">Indicative ${u.weeks}-week phasing across the standard five-phase delivery structure. Phase boundaries to be confirmed at solution definition.</p>`)}
+
+    ${exhibit('10','Looking ahead','Identified, but outside current scope', `
+      ${u.lookingAhead && u.lookingAhead.length ? `<div class="box"><ul class="b plain">${li(u.lookingAhead)}</ul></div>` : `<div class="miro">
+        <div class="mt">Not yet defined</div>
+        <div class="ms">Adjacent and downstream opportunities identified for this use case, but outside the current scope, will be added here.</div>
+      </div>`}`)}
+
+    ${exhibit('11','Discovery record','Discovery notes', `<div class="box"><ul class="b plain">${li(u.notes)}</ul></div>`)}
+
+    <div class="pager">
+      <button class="pbtn" ${idx===0?'disabled':''} onclick="go('${idx===0?'':UC[idx-1].id}')">${idx===0?'':'&#8592; '+UC[idx-1].name}</button>
+      <button class="pbtn" ${idx===UC.length-1?'disabled':''} onclick="go('${idx===UC.length-1?'':UC[idx+1].id}')">${idx===UC.length-1?'':UC[idx+1].name+' &#8594;'}</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- BOOT ---------- */
+// setMode/loadFrame/go must be global (not nested inside boot()) — they're invoked from
+// inline onclick="" HTML attributes generated by detail()/matrix()/summary(), and inline
+// event-handler attributes resolve against the global scope, not a closure.
+const modes={};
+function setMode(id,mode){
+  const f=document.getElementById('emb-'+id); if(!f) return;
+  const url=f.dataset[mode]; if(!url) return;
+  if(modes[id]!==mode){
+    modes[id]=mode;
+    const l=document.getElementById('load-'+id); if(l) l.style.display='flex';
+    f.src=url;
+  }
+  ['read','fit'].forEach(m=>{
+    const btn=document.getElementById('seg-'+m+'-'+id);
+    if(btn) btn.classList.toggle('active', m===mode);
+  });
+}
+function loadFrame(id){
+  if(!modes[id]) setMode(id,'read');
+  const solId=id+'-sol';
+  if(!modes[solId] && document.getElementById('emb-'+solId)) setMode(solId,'read');
+}
+function go(id){
+  if(!id) return;
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  loadFrame(id);
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.toggle('active',e.dataset.page===id));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function boot(){
+const pages=[{id:'summary',label:'Summary',build:summary}]
+  .concat(UC.map((u,i)=>({id:u.id,label:u.name,num:u.num,
+      priority:(ALL.find(a=>a.id===u.bvpId)||{}).priority,build:()=>detail(u,i)})));
+const nav=document.getElementById('nav'), main=document.getElementById('main');
+
+pages.forEach((p,i)=>{
+  const b=document.createElement('div');
+  b.className='nav-item'+(i===0?' active':''); b.dataset.page=p.id; b.tabIndex=0;
+  b.innerHTML=`<span class="nl"><span class="nn">${p.num||'00'}</span><span class="nt">${p.label}</span></span>${p.priority?`<span class="chip ${p.priority==='Pending'?'PD':p.priority}">${p.priority==='Pending'?'TBD':p.priority}</span>`:''}`;
+  b.addEventListener('click',()=>go(p.id));
+  b.addEventListener('keypress',e=>{if(e.key==='Enter')go(p.id)});
+  nav.appendChild(b);
+
+  const w=document.createElement('div');
+  w.className='page'+(i===0?' active':''); w.id='page-'+p.id;
+  w.innerHTML=`<div class="topbar"><div class="crumb">Aspirus use case priority / <b>${p.label}</b></div><a href="#" class="pill logout-pill">Log out</a></div>`+p.build();
+  main.appendChild(w);
+  w.querySelector('.logout-pill').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    await fetch('/api/logout',{method:'POST'});
+    window.location.reload();
+  });
+});
+}
+</script>
+
+<!-- ============ CHAT WITH THE DATA ============ -->
+<style>
+  #chat-toggle{position:fixed;right:26px;bottom:26px;z-index:50;width:52px;height:52px;border-radius:50%;
+    background:var(--blue);color:#fff;border:none;box-shadow:0 6px 20px rgba(13,27,62,.28);cursor:pointer;
+    display:none;align-items:center;justify-content:center;font-size:22px;transition:transform .15s}
+  #chat-toggle.enabled{display:flex} /* shown only once /api/data confirms chat is enabled */
+  #chat-toggle:hover{transform:scale(1.06)}
+  #chat-panel{position:fixed;right:26px;bottom:90px;z-index:50;width:360px;max-width:calc(100vw - 40px);
+    height:480px;max-height:calc(100vh - 130px);background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;box-shadow:0 18px 48px rgba(13,27,62,.22);display:none;flex-direction:column;overflow:hidden}
+  #chat-panel.open{display:flex}
+  #chat-head{padding:13px 16px;background:linear-gradient(165deg,#0D1B3E,#17357C);color:#fff;
+    font-family:var(--fd);font-size:13.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+  #chat-head span.sub{display:block;font-family:var(--fb);font-size:10.5px;font-weight:400;color:#B4C0D2;margin-top:2px}
+  #chat-close{background:none;border:none;color:#B4C0D2;font-size:18px;cursor:pointer;line-height:1}
+  #chat-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.55}
+  .chat-msg{max-width:88%;padding:8px 11px;border-radius:10px}
+  .chat-msg.user{align-self:flex-end;background:var(--blue-tint);color:var(--ink)}
+  .chat-msg.assistant{align-self:flex-start;background:var(--line-soft);color:var(--ink-soft);white-space:pre-wrap}
+  .chat-msg.error{align-self:flex-start;background:var(--no-tint);color:var(--no)}
+  #chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+  #chat-input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:var(--fb);
+    font-size:12.5px;resize:none;height:36px}
+  #chat-send{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:0 14px;font-size:12.5px;
+    font-weight:600;cursor:pointer}
+  #chat-send:disabled{opacity:.5;cursor:default}
+</style>
+<button id="chat-toggle" aria-label="Ask a question about this data" title="Ask a question about this data">&#128172;</button>
+<div id="chat-panel" role="dialog" aria-label="Chat with the use case data">
+  <div id="chat-head">
+    <div>Ask about this data<span class="sub">Answers are limited to the use cases on this page</span></div>
+    <button id="chat-close" aria-label="Close chat">&times;</button>
+  </div>
+  <div id="chat-log"></div>
+  <form id="chat-form">
+    <textarea id="chat-input" placeholder="e.g. Which use case pays back fastest?" rows="1"></textarea>
+    <button id="chat-send" type="submit">Send</button>
+  </form>
+</div>
+<script>
+(function(){
+  const toggle=document.getElementById('chat-toggle'), panel=document.getElementById('chat-panel'),
+        closeBtn=document.getElementById('chat-close'), log=document.getElementById('chat-log'),
+        form=document.getElementById('chat-form'), input=document.getElementById('chat-input'),
+        send=document.getElementById('chat-send');
+  let history=[];
+
+  toggle.addEventListener('click',()=>{
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')) input.focus();
+  });
+  closeBtn.addEventListener('click',()=>panel.classList.remove('open'));
+
+  function addMsg(role,text){
+    const d=document.createElement('div');
+    d.className='chat-msg '+role;
+    d.textContent=text;
+    log.appendChild(d);
+    log.scrollTop=log.scrollHeight;
+    return d;
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const message=input.value.trim();
+    if(!message) return;
+    addMsg('user',message);
+    input.value='';
+    send.disabled=true;
+    const pending=addMsg('assistant','Thinking…');
+    try{
+      const res=await fetch('/api/chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({message, history})
+      });
+      const data=await res.json();
+      if(!res.ok) throw new Error(data.error||'Request failed');
+      pending.textContent=data.reply;
+      pending.className='chat-msg assistant';
+      history.push({role:'user',content:message});
+      history.push({role:'assistant',content:data.reply});
+      history=history.slice(-10);
+    }catch(err){
+      pending.textContent='Sorry, something went wrong: '+err.message;
+      pending.className='chat-msg error';
+    }finally{
+      send.disabled=false;
+    }
+  });
+
+  input.addEventListener('keydown',(e)=>{
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); }
+  });
+})();
+</script>
+
+<!-- ============ LOGIN GATE ============ -->
+<style>
+  #login-gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;
+    align-items:center;justify-content:center;padding:20px}
+  #login-gate.hidden{display:none}
+  #login-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:30px 28px;box-shadow:0 18px 48px rgba(13,27,62,.14)}
+  #login-card h1{font-family:var(--fd);font-size:18px;margin:0 0 6px}
+  #login-card p{font-size:12.5px;color:var(--slate);margin:0 0 20px;line-height:1.55}
+  #login-form label{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--slate-lt);margin:0 0 5px}
+  #login-form input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;
+    padding:9px 11px;font-family:var(--fb);font-size:13.5px;margin-bottom:14px}
+  #login-form button{width:100%;background:var(--blue);color:#fff;border:none;border-radius:8px;
+    padding:10px;font-size:13.5px;font-weight:600;cursor:pointer}
+  #login-form button:disabled{opacity:.6;cursor:default}
+  #login-error{display:none;background:var(--no-tint);color:var(--no);font-size:12px;
+    padding:8px 10px;border-radius:7px;margin-bottom:14px}
+  #login-loading{display:flex;align-items:center;justify-content:center;height:100vh;color:var(--slate);
+    font-family:var(--fm);font-size:12px}
+</style>
+<div id="login-loading">Loading&hellip;</div>
+<div id="login-gate" class="hidden">
+  <div id="login-card">
+    <h1>Aspirus Health &mdash; Automation Prioritization</h1>
+    <p>This portal contains confidential business data. Sign in with the credentials you were given.</p>
+    <div id="login-error"></div>
+    <form id="login-form">
+      <label for="login-user">Username</label>
+      <input id="login-user" name="username" autocomplete="username" required>
+      <label for="login-pass">Password</label>
+      <input id="login-pass" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit" id="login-submit">Sign in</button>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  const loading=document.getElementById('login-loading'), gate=document.getElementById('login-gate'),
+        form=document.getElementById('login-form'), errBox=document.getElementById('login-error'),
+        submitBtn=document.getElementById('login-submit'), sidebar=document.querySelector('.sidebar'),
+        main=document.getElementById('main');
+
+  function setChromeVisible(visible){
+    if(sidebar) sidebar.style.display = visible ? '' : 'none';
+    if(main) main.style.display = visible ? '' : 'none';
+  }
+  setChromeVisible(false);
+
+  async function loadData(){
+    loading.style.display='flex';
+    gate.classList.add('hidden');
+    try{
+      const res = await fetch('/api/data');
+      if(res.ok){
+        const d = await res.json();
+        UC = d.UC; ALL = d.ALL;
+        const chatToggle = document.getElementById('chat-toggle');
+        if(chatToggle) chatToggle.classList.toggle('enabled', !!d.chatEnabled);
+        loading.style.display='none';
+        setChromeVisible(true);
+        boot();
+      } else {
+        loading.style.display='none';
+        setChromeVisible(false);
+        gate.classList.remove('hidden');
+      }
+    } catch(err){
+      loading.style.display='none';
+      gate.classList.remove('hidden');
+      errBox.textContent='Could not reach the server. Please retry.';
+      errBox.style.display='block';
+    }
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    errBox.style.display='none';
+    submitBtn.disabled=true; submitBtn.textContent='Signing in…';
+    try{
+      const res = await fetch('/api/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          username: document.getElementById('login-user').value,
+          password: document.getElementById('login-pass').value
+        })
+      });
+      if(res.ok){
+        form.reset();
+        await loadData();
+      } else {
+        const data = await res.json().catch(()=>({}));
+        errBox.textContent = data.error || 'Invalid username or password.';
+        errBox.style.display='block';
+      }
+    } catch(err){
+      errBox.textContent='Could not reach the server. Please retry.';
+      errBox.style.display='block';
+    } finally {
+      submitBtn.disabled=false; submitBtn.textContent='Sign in';
+    }
+  });
+
+  loadData();
+})();
+</script>
+</body>
+</html>

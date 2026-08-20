@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: aspirus-priority-portal
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORTAL_USERNAME
+        sync: false
+      - key: PORTAL_PASSWORD_HASH
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
