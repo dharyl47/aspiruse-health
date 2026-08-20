@@ -6,55 +6,74 @@
 <title>Aspirus Health - Automation Use Case Priority</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0F1B2D; --ink-2:#3A485C; --mute:#78859A;
-    --bg:#F2F4F7; --panel:#FFFFFF; --rule:#DCE1E9; --rule-soft:#EEF1F5;
-    --brand:#0B4F6C; --brand-2:#1B7A9E; --brand-3:#7FB4C6; --brand-lt:#E1F0F5;
-    --hot:#B5641E; --hot-lt:#FBEDE3;
+    --bg:#F7F5F2; --panel:#FFFFFF; --rule:#E8E0D8; --rule-soft:#F3EEE9;
+    --brand:#e7670f; --brand-2:#c4550c; --brand-3:#f4a366; --brand-lt:#FDE8D6;
+    --btn:#2F5EF5; --btn-hover:#244ED4;
+    --hot:#c4550c; --hot-lt:#FDE8D6;
     --ok:#2C7A5B; --no:#B23A2E; --no-lt:#FBECEA;
-    --fd:'Archivo',sans-serif; --fb:'Inter',sans-serif;
+    --fd:'DM Sans',sans-serif; --fb:'DM Sans',sans-serif; --fm:'DM Sans',sans-serif;
     /* legacy aliases so every existing rule below keeps working under the new palette */
     --ink-soft:var(--ink-2); --slate:var(--ink-2); --slate-lt:var(--mute);
-    --blue:var(--brand-2); --blue-deep:var(--brand); --blue-tint:var(--brand-lt); --blue-lift:var(--brand-3);
+    --blue:var(--btn); --blue-deep:var(--brand); --blue-tint:var(--brand-lt); --blue-lift:var(--brand-3);
     --amber:var(--hot); --amber-tint:var(--hot-lt);
     --no-tint:var(--no-lt); --line:var(--rule); --line-soft:var(--rule-soft);
     --p1:var(--brand); --p2:var(--hot); --p3:var(--mute);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--fb);-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+  body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:18px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+  h1,h1.t,h1.dt{font-family:var(--fd);font-size:3rem;font-weight:700;letter-spacing:-.02em;line-height:1.12}
+  h2,h2.ex-title{font-family:var(--fd);font-size:2.5rem;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+  h3{font-family:var(--fd);font-size:28px;font-weight:600;letter-spacing:-.015em;line-height:1.25}
   table,.n,.v,.num,.mono,.tabular{font-variant-numeric:tabular-nums lining-nums}
   ::selection{background:var(--brand-lt)}
   a{color:inherit}
 
   /* SIDEBAR */
-  .sidebar{width:268px;flex:0 0 268px;background:var(--brand);color:#D3E5EC;padding:30px 20px 22px;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
-  .sidebar:before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:100% 4px;opacity:.6;pointer-events:none}
+  .sidebar{width:268px;flex:0 0 268px;background:var(--brand);color:rgba(255,255,255,.86);padding:24px 8px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;z-index:8}
+  .sidebar:before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:100% 4px;opacity:.6;pointer-events:none;border-radius:inherit}
   .sidebar>*{position:relative;z-index:1}
-  .brand{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.16)}
-  .brand .eyebrow{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#8FC4D6;font-weight:600}
+  .brand{padding-bottom:16px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.16)}
+  .brand .eyebrow{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:600}
   .brand h1{font-family:var(--fd);font-size:19px;font-weight:700;line-height:1.24;letter-spacing:-.02em;margin:11px 0 0;color:#fff}
-  .brand .sub{font-size:11px;color:#8FC4D6;margin-top:8px;line-height:1.55}
-  .navlabel{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#6E9FB2;margin:2px 2px 11px;font-weight:600}
-  nav{display:flex;flex-direction:column;gap:1px}
-  .nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;cursor:pointer;font-size:12.5px;font-weight:450;color:#B4D3DE;border-left:2px solid transparent;transition:background .15s}
+  .brand .sub{font-size:11px;color:rgba(255,255,255,.78);margin-top:8px;line-height:1.55}
+  .navlabel{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7);margin:2px 2px 11px;font-weight:600}
+  nav{display:flex;flex-direction:column;gap:2px;flex:1;min-height:0}
+  .nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;cursor:pointer;font-size:12.5px;font-weight:450;color:rgba(255,255,255,.86);border-left:2px solid transparent;transition:background .15s;position:relative}
   .nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
-  .nav-item.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:#7FD4EC;font-weight:600}
-  .nav-item:focus-visible{outline:2px solid #7FD4EC;outline-offset:1px}
-  .nl{display:flex;align-items:center;gap:9px;min-width:0}
-  .nn{font-size:10px;color:#5E90A5;flex:0 0 15px}
-  .nav-item.active .nn{color:#7FD4EC}
-  .nt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .chip{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:.04em;padding:3px 6px;flex-shrink:0}
-  .chip.P1{background:#7FD4EC;color:#06384D}
-  .chip.P2{background:rgba(127,212,236,.2);color:#9FD8EA}
-  .chip.P3{background:rgba(255,255,255,.11);color:#9EB9C4}
-  .chip.PD{background:rgba(240,169,59,.24);color:#F2C285}
+  .nav-item.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:#fff;font-weight:600}
+  .nav-item:focus-visible{outline:2px solid #fff;outline-offset:1px}
+  .nl{display:flex;align-items:flex-start;gap:8px;min-width:0;flex:1}
+  .nn{font-size:10px;color:rgba(255,255,255,.65);flex:0 0 16px;padding-top:1px}
+  .nav-item.active .nn{color:#fff}
+  .nt{overflow:visible;text-overflow:unset;white-space:normal;line-height:1.35}
+  .chip{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:.04em;padding:4px 7px;flex-shrink:0;min-width:28px;text-align:center}
+  .chip.P1{background:#fff;color:var(--brand)}
+  .chip.P2{background:rgba(255,255,255,.22);color:#fff}
+  .chip.P3{background:rgba(255,255,255,.11);color:rgba(255,255,255,.85)}
+  .chip.PD{background:rgba(47,94,245,.28);color:#D6E0FF}
+  .chip.SM{background:rgba(255,255,255,.18);color:#fff}
   .tier.Pending{background:var(--hot-lt);color:var(--hot)}
-  .sfoot{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.14);font-size:10px;color:#7BA6B7;line-height:1.75}
-  .sfoot b{color:#B4D3DE;font-weight:600}
+  .sfoot{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:10px;color:rgba(255,255,255,.78);line-height:1.75;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .sfoot b{color:#fff;font-weight:600}
+  .sfoot-copy{min-width:0}
+  .nav-toggle{flex-shrink:0;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font-family:var(--fd);font-size:11px;font-weight:700;padding:6px 8px;line-height:1}
+  .nav-toggle:hover{background:rgba(255,255,255,.2)}
+  .nav-toggle:focus-visible{outline:2px solid #fff;outline-offset:1px}
+
+  body.nav-collapsed .sidebar{width:56px;flex-basis:56px;padding:16px 6px 12px}
+  body.nav-collapsed .brand .eyebrow,body.nav-collapsed .brand h1,body.nav-collapsed .navlabel,body.nav-collapsed .nl,body.nav-collapsed .sfoot-copy{display:none}
+  body.nav-collapsed .brand{padding:0 0 12px;margin-bottom:10px;min-height:0;border-bottom-color:rgba(255,255,255,.2)}
+  body.nav-collapsed nav{padding-right:0;margin-right:0;align-items:center}
+  body.nav-collapsed .nav-item{justify-content:center;padding:8px 4px;width:100%;border-left-color:transparent}
+  body.nav-collapsed .nav-item.active{border-left-color:transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+  body.nav-collapsed .chip{position:static;transform:none;right:auto;min-width:32px;padding:6px 5px;box-shadow:none}
+  body.nav-collapsed .sfoot{justify-content:center;padding-top:12px}
+  body.nav-collapsed .nav-toggle{width:100%;padding:8px 4px}
 
   /* MAIN */
   main{flex:1;min-width:0}
@@ -62,47 +81,51 @@
   .page.active{display:block;animation:fade .35s ease}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){.page.active{animation:none}*{transition:none!important}}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 48px;background:var(--panel);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:5}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:5}
   .crumb{font-size:10.5px;color:var(--mute);letter-spacing:.05em;text-transform:uppercase}
   .crumb b{color:var(--ink);font-weight:600}
   .pill{font-size:10px;padding:5px 10px;background:var(--bg);border:1px solid var(--rule);color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
   .pill.logout-pill{cursor:pointer;text-decoration:none;transition:background .15s,color .15s,border-color .15s}
   .pill.logout-pill:hover{background:var(--brand-lt);color:var(--brand);border-color:var(--brand-3)}
-  .shell{max-width:1140px;margin:0 auto;padding:40px 48px 90px}
+  .shell{max-width:1600px;margin:0 auto;padding:40px 20px 90px}
 
   /* MASTHEAD (summary page only) */
-  .masthead{background:var(--brand);color:#fff;padding:48px 0 42px}
-  .mast-in{max-width:1140px;margin:0 auto;padding:0 48px;display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:nowrap}
+  .masthead{position:relative;color:#fff;padding:48px 0 42px;background-color:#0b0d12;background-image:url('/img/banner-bg.png');background-position:center;background-size:cover;background-repeat:no-repeat;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.18)}
+  .masthead:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,10,16,.82) 0%,rgba(8,10,16,.62) 48%,rgba(8,10,16,.38) 100%);pointer-events:none}
+  .mast-in{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:nowrap}
   .mast-in>div:first-child{flex:1;min-width:0}
-  .masthead .eyebrow{font-family:var(--fd);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#8FC4D6;font-weight:700;margin-bottom:16px}
-  .masthead h1.t{font-family:var(--fd);font-size:40px;font-weight:700;line-height:1.06;letter-spacing:-.03em;margin:0 0 15px;max-width:none;color:#fff}
-  .masthead p.lede{font-size:14.5px;line-height:1.7;color:#BCD9E3;max-width:60ch;margin:0}
-  .mast-side{text-align:right;font-size:11px;line-height:1.85;color:#8FC4D6;flex:0 0 230px;padding-top:5px}
+  .masthead .eyebrow{font-family:var(--fd);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:16px}
+  .mast-in>div:first-child .eyebrow{display:flex;align-items:center;gap:10px}
+  .mast-in>div:first-child .eyebrow:before{content:'';width:12px;height:12px;background:var(--brand);flex-shrink:0}
+  .masthead h1.t, .masthead h1.dt{font-family:var(--fd);font-size:3rem;font-weight:700;line-height:1.06;letter-spacing:-.03em;margin:0 0 15px;max-width:none;color:#fff}
+  .masthead p.lede, .masthead .dframe{font-size:18px;line-height:1.7;color:rgba(255,255,255,.9);max-width:62ch;margin:0}
+  .mast-side{text-align:right;font-size:14px;line-height:1.85;color:rgba(255,255,255,.82);flex:0 0 230px;padding-top:5px}
+  .masthead .tierlg{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45)}
 
   .eyebrow{font-family:var(--fd);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin-bottom:11px}
-  h1.t{font-family:var(--fd);font-size:33px;font-weight:700;line-height:1.14;letter-spacing:-.015em;margin:0 0 12px}
-  p.lede{font-size:15px;line-height:1.68;color:var(--ink-2);max-width:660px;margin:0}
+  h1.t{font-family:var(--fd);font-size:3rem;font-weight:700;line-height:1.14;letter-spacing:-.015em;margin:0 0 12px}
+  p.lede{font-size:18px;line-height:1.68;color:var(--ink-2);max-width:660px;margin:0}
 
   /* headline band */
   .band{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:32px 0 42px}
   .bcell{background:var(--panel);padding:21px 24px}
   .bcell .n{font-family:var(--fd);font-size:29px;font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--brand)}
-  .bcell .l{font-size:11.5px;color:var(--ink-2);margin-top:10px;line-height:1.5}
+  .bcell .l{font-size:18px;color:var(--ink-2);margin-top:10px;line-height:1.5}
 
   /* EXHIBITS (replaces the old slabel/stitle/card header pattern) */
   .exhibit{margin-bottom:42px;background:var(--panel);border:1px solid var(--rule)}
   .ex-head{border-bottom:2px solid var(--brand);padding:19px 26px 17px;display:flex;gap:16px;align-items:flex-start}
   .ex-no{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;background:var(--brand);padding:6px 9px;flex-shrink:0;line-height:1.1}
   .ex-label{font-family:var(--fd);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:700;margin-bottom:6px}
-  h2.ex-title{font-family:var(--fd);font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.28}
-  p.ex-sub{font-size:13px;color:var(--ink-2);line-height:1.62;margin:7px 0 0;max-width:74ch}
+  h2.ex-title{font-family:var(--fd);font-size:2.5rem;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.28}
+  p.ex-sub{font-size:18px;color:var(--ink-2);line-height:1.62;margin:7px 0 0;max-width:74ch}
   .ex-body{padding:26px}
   .ex-body.flush{padding:0}
   /* card kept as an alias of exhibit's inner body for any leftover references */
   .card{background:var(--panel);border:1px solid var(--rule);padding:24px 26px 18px;margin-bottom:42px}
 
   /* matrix */
-  .flag{display:inline-block;font-size:10.5px;color:var(--hot);background:var(--hot-lt);border:1px solid rgba(181,100,30,.28);padding:6px 11px;margin-bottom:20px;letter-spacing:.03em}
+  .flag{display:inline-block;font-size:10.5px;color:var(--hot);background:var(--hot-lt);border:1px solid rgba(196,85,12,.28);padding:6px 11px;margin-bottom:20px;letter-spacing:.03em}
   .mx{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}
   .mxsvg{flex:1 1 520px;min-width:320px}
   .mxkey{flex:0 1 240px;display:flex;flex-direction:column;gap:17px;padding-top:2px}
@@ -127,11 +150,11 @@
   .viz-tt .tt-r{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#C3D3DE;padding:2px 0}
   .viz-tt .tt-r b{font-weight:600;color:#fff;margin-left:auto;padding-left:14px}
   .viz-tt .tt-k{width:8px;height:2.5px;border-radius:2px;flex:0 0 8px}
-  .viz-tt .tt-tag{font-family:var(--fd);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#8FC4D6;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12)}
+  .viz-tt .tt-tag{font-family:var(--fd);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12)}
 
   /* table */
   .tbl-wrap{background:var(--panel)}
-  table.rank,table.cvf,table.est{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel)}
+  table.rank,table.cvf,table.est{width:100%;border-collapse:collapse;font-size:18px;background:var(--panel)}
   table.rank thead th,table.cvf thead th,table.est thead th{text-align:left;font-family:var(--fd);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:700;padding:14px 12px 13px;background:#FAFCFD;border-bottom:1px solid var(--rule)}
   table.rank th.r,table.rank td.r{text-align:right}
   table.rank tbody td,table.cvf tbody td,table.est tbody td{padding:13px 12px;border-bottom:1px solid var(--rule-soft);color:var(--ink-2);vertical-align:top;line-height:1.5}
@@ -140,7 +163,7 @@
   table.rank tbody tr.clickable{cursor:pointer}
   table.rank tbody tr:not(.clickable){cursor:default}
   .mono{font-family:var(--fb)}
-  .ucname{font-family:var(--fd);font-weight:600;font-size:13px;color:var(--ink);line-height:1.35}
+  .ucname{font-family:var(--fd);font-weight:600;font-size:18px;color:var(--ink);line-height:1.35}
   .vbar{position:relative;height:22px;background:var(--rule-soft);min-width:150px}
   .vbar-fill{position:absolute;left:0;top:0;bottom:0}
   .vbar-val{position:absolute;right:8px;top:0;bottom:0;display:flex;align-items:center;font-family:var(--fd);font-weight:700;font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}
@@ -151,36 +174,38 @@
   .est{color:var(--hot);font-size:9.5px}
   .ev{display:inline-flex;align-items:center;gap:6px;font-size:11.5px}
   .evd{width:7px;height:7px;border-radius:50%}
-  .foot-note{font-size:11.5px;color:var(--mute);line-height:1.7;margin:14px 0 42px;max-width:92ch}
+  .foot-note{font-size:18px;color:var(--mute);line-height:1.7;margin:14px 0 42px;max-width:92ch}
   .foot-note b{color:var(--ink-2)}
   .neg{color:var(--no);font-weight:600}
 
   /* DETAIL */
   .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:26px;padding-bottom:24px;border-bottom:1px solid var(--rule);margin-bottom:30px}
-  h1.dt{font-family:var(--fd);font-size:28px;font-weight:700;letter-spacing:-.015em;margin:0 0 11px}
-  .dframe{font-size:14px;line-height:1.68;color:var(--ink-2);max-width:640px}
+  h1.dt{font-family:var(--fd);font-size:3rem;font-weight:700;letter-spacing:-.015em;margin:0 0 11px}
+  .dframe{font-size:18px;line-height:1.68;color:var(--ink-2);max-width:640px}
   .tierlg{font-family:var(--fd);font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:7px 13px;white-space:nowrap;flex-shrink:0}
   .tierlg.P1{background:var(--brand);color:#fff}
   .tierlg.P2{background:var(--hot-lt);color:var(--hot);border:1px solid #E8C69B}
   .tierlg.P3{background:#EDF0F4;color:var(--mute);border:1px solid #DCE2EC}
 
-  .qf{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:36px}
-  .qfc{background:var(--panel);padding:15px 16px}
-  .qfc .k{font-size:9.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-  .qfc .v{font-family:var(--fd);font-size:13px;font-weight:600;line-height:1.35}
-  .qfc .vsub{font-size:9.5px;color:var(--hot);margin-top:3px}
+  .qf{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:#e7670f url('/img/analytics-bg.png') center / cover no-repeat;border:none;margin-bottom:36px;overflow:hidden}
+  .qfc{background:transparent;padding:22px 20px;border-right:1px solid rgba(255,255,255,.38);color:#fff}
+  .qfc:last-child{border-right:none}
+  .qfc .k{font-size:11px;color:rgba(255,255,255,.88);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+  .qfc .v{font-family:var(--fd);font-size:22px;font-weight:700;line-height:1.35;color:#fff}
+  .qfc .vsub{font-size:11px;color:rgba(255,255,255,.9);margin-top:3px}
+  .qf .pend{color:#fff}
 
   section.d{margin-bottom:40px}
-  .body{font-size:14px;line-height:1.75;color:var(--ink-2);max-width:720px;margin:0}
+  .body{font-size:18px;line-height:1.75;color:var(--ink-2);max-width:720px;margin:0}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .box{background:var(--panel);border:1px solid var(--rule);padding:19px 21px}
   .box.in{border-top:3px solid var(--ok)}
   .box.out{border-top:3px solid var(--no)}
   .box h4{font-family:var(--fd);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;color:var(--ink)}
   ul.b{margin:0;padding:0;list-style:none}
-  ul.b li{font-size:12.5px;line-height:1.55;color:var(--ink-2);padding:7px 0;border-bottom:1px solid var(--rule-soft);display:flex;gap:9px}
+  ul.b li{font-size:18px;line-height:1.55;color:var(--ink-2);padding:7px 0;border-bottom:1px solid var(--rule-soft);display:flex;gap:9px}
   ul.b li:last-child{border-bottom:none}
-  ul.b li.sub{padding-left:20px;border-bottom:none;padding-top:2px;color:var(--ink-2);font-size:12px}
+  ul.b li.sub{padding-left:20px;border-bottom:none;padding-top:2px;color:var(--ink-2);font-size:18px}
   .box.in ul.b li:not(.sub):before{content:"✓";color:var(--ok);font-weight:700;flex-shrink:0}
   .box.out ul.b li:not(.sub):before{content:"✕";color:var(--no);font-weight:700;flex-shrink:0}
   ul.b li.sub:before{content:"–";color:var(--mute);flex-shrink:0}
@@ -188,7 +213,7 @@
 
   .miro-shell{border:1px solid var(--rule);overflow:hidden;background:var(--panel)}
   .miro-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px 12px 16px;border-bottom:1px solid var(--rule);background:#FAFCFD;flex-wrap:wrap}
-  .miro-lbl{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:12.5px;font-weight:600;color:var(--ink)}
+  .miro-lbl{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)}
   .mi-sm{width:24px;height:24px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;font-weight:700;flex-shrink:0}
   .miro-bar .btn{margin:0;text-decoration:none;display:inline-block}
   .miro-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
@@ -203,7 +228,7 @@
 
   .synced{font-size:10px;color:var(--mute)}
   .miro-frame{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
-  .miro-load{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;text-align:center;padding:26px;font-size:12.5px;color:var(--ink-2);z-index:1;pointer-events:none}
+  .miro-load{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;text-align:center;padding:26px;font-size:18px;color:var(--ink-2);z-index:1;pointer-events:none}
   .miro-load .miro-fb{font-size:11px;color:var(--mute);max-width:400px;line-height:1.6;pointer-events:auto}
   .spin{width:22px;height:22px;border:2.5px solid var(--rule);border-top-color:var(--brand-2);border-radius:50%;animation:sp .8s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
@@ -211,37 +236,37 @@
   .miro{border:1.5px dashed #C3CCD6;background:linear-gradient(180deg,#FBFCFD,#F2F5F8);padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:11px}
   .mi{width:42px;height:42px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:15px;font-weight:700}
   .miro .mt{font-family:var(--fd);font-weight:600;font-size:14px}
-  .miro .ms{font-size:12px;color:var(--ink-2);max-width:440px;line-height:1.6}
-  .btn{margin-top:6px;font-family:var(--fd);font-size:11px;font-weight:600;color:var(--brand);background:#fff;border:1px solid var(--rule);padding:8px 15px;cursor:pointer;transition:border-color .15s}
-  .btn:hover{border-color:var(--brand-2)}
-  .btn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+  .miro .ms{font-size:18px;color:var(--ink-2);max-width:440px;line-height:1.6}
+  .btn{margin-top:6px;font-family:var(--fd);font-size:18px;font-weight:600;color:#fff;background:var(--btn);border:1px solid var(--btn);padding:10px 18px;cursor:pointer;transition:background .15s,border-color .15s}
+  .btn:hover{background:var(--btn-hover);border-color:var(--btn-hover);color:#fff}
+  .btn:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
 
   table.est tr:last-child td{font-weight:600;color:var(--ink);background:#FAFCFD}
-  .note{font-size:11px;color:var(--mute);font-style:italic;margin-top:9px;line-height:1.6}
+  .note{font-size:18px;color:var(--mute);font-style:italic;margin-top:9px;line-height:1.6}
 
   table.cvf thead th{background:#F7FAFC}
   table.cvf td.m{font-weight:600;color:var(--ink);width:22%}
-  table.cvf td.cmt{font-size:11.5px;color:var(--ink-2);line-height:1.5;width:26%}
-  table.cvf td.imp{font-size:11.5px;color:var(--brand);font-weight:600;width:24%}
+  table.cvf td.cmt{font-size:18px;color:var(--ink-2);line-height:1.5;width:26%}
+  table.cvf td.imp{font-size:18px;color:var(--brand);font-weight:600;width:24%}
   .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ocard{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--brand-2);padding:16px 18px}
-  .ocard .ot{font-family:var(--fd);font-weight:600;font-size:13px;color:var(--ink);margin-bottom:6px;line-height:1.35}
-  .ocard .od{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+  .ocard .ot{font-family:var(--fd);font-weight:600;font-size:18px;color:var(--ink);margin-bottom:6px;line-height:1.35}
+  .ocard .od{font-size:18px;color:var(--ink-2);line-height:1.6}
   .pend{color:var(--hot);font-weight:600;font-style:normal}
   .ast{color:var(--no);font-weight:700;font-size:10px;margin-left:2px}
-  .note-red{color:var(--no);background:var(--no-lt);border-left:3px solid var(--no);padding:12px 16px;font-size:11.5px;line-height:1.65;margin:0 0 12px}
+  .note-red{color:var(--no);background:var(--no-lt);border-left:3px solid var(--no);padding:12px 16px;font-size:18px;line-height:1.65;margin:0 0 12px}
   .kdot.ringed{background:var(--brand-2);box-shadow:0 0 0 1.6px var(--ink)}
   table.cvf tr.tot td{background:#F7FAFC;font-weight:600;color:var(--ink);border-top:1px solid var(--rule)}
   .analysis{margin:0;padding:0;list-style:none}
-  .analysis li{display:grid;grid-template-columns:230px 1fr;gap:22px;font-size:13px;line-height:1.7;color:var(--ink-2);padding:15px 0;border-bottom:1px solid var(--rule-soft)}
+  .analysis li{display:grid;grid-template-columns:230px 1fr;gap:22px;font-size:18px;line-height:1.7;color:var(--ink-2);padding:15px 0;border-bottom:1px solid var(--rule-soft)}
   .analysis li:last-child{border-bottom:none}
-  .analysis b{font-family:var(--fd);color:var(--brand);font-weight:700;font-size:13px;line-height:1.45}
-  .rec{background:var(--brand-lt);border-left:3px solid var(--brand);padding:15px 20px;font-size:12.5px;line-height:1.7;color:var(--ink-2);margin:22px 26px 26px}
+  .analysis b{font-family:var(--fd);color:var(--brand);font-weight:700;font-size:18px;line-height:1.45}
+  .rec{background:var(--brand-lt);border-left:3px solid var(--brand);padding:15px 20px;font-size:18px;line-height:1.7;color:var(--ink-2);margin:22px 26px 26px}
   .rec b{font-family:var(--fd);color:var(--brand);font-weight:700}
   @media(max-width:760px){.ogrid{grid-template-columns:1fr}}
-  .subh{font-family:var(--fd);font-size:13px;font-weight:600;color:var(--ink);margin:26px 0 12px}
-  .vcard .vt{font-family:var(--fd);font-weight:600;font-size:12.5px;color:var(--ink);margin-bottom:5px}
-  .vcard .vd{font-size:12.5px;color:var(--ink-2);line-height:1.55}
+  .subh{font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink);margin:26px 0 12px}
+  .vcard .vt{font-family:var(--fd);font-weight:600;font-size:18px;color:var(--ink);margin-bottom:5px}
+  .vcard .vd{font-size:18px;color:var(--ink-2);line-height:1.55}
   @media(max-width:760px){table.cvf{display:block;overflow-x:auto;white-space:nowrap}}
   .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
   .vcard{background:var(--panel);padding:18px 20px}
@@ -263,10 +288,10 @@
   .evbox{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--brand-2);padding:16px 19px}
   .evbox.pending{border-left-color:var(--hot)}
   .evbox .eh{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:7px}
-  .evbox p{margin:0;font-size:13px;line-height:1.65;color:var(--ink-2)}
+  .evbox p{margin:0;font-size:18px;line-height:1.65;color:var(--ink-2)}
 
   .pager{display:flex;justify-content:space-between;gap:12px;padding-top:26px;border-top:1px solid var(--rule)}
-  .pbtn{font-size:12.5px;color:var(--brand);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:600;padding:6px 2px}
+  .pbtn{font-size:18px;color:var(--brand);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:600;padding:6px 2px}
   .pbtn:hover{text-decoration:underline}
   .pbtn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
   .pbtn:disabled{color:var(--mute);cursor:default;text-decoration:none}
@@ -279,10 +304,14 @@
   @media(max-width:1000px){.qf{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:860px){
     body{flex-direction:column}
-    .sidebar{position:relative;width:100%;flex:none;height:auto}
-    .shell{padding:26px 18px 60px}.topbar{padding:12px 18px}.mast-in{padding:0 18px;flex-wrap:wrap}
+    body.nav-collapsed .sidebar,.sidebar{position:relative;width:100%;flex:none;height:auto}
+    body.nav-collapsed .brand .eyebrow,body.nav-collapsed .brand h1,body.nav-collapsed .navlabel,body.nav-collapsed .nl,body.nav-collapsed .sfoot-copy{display:block}
+    body.nav-collapsed .nl{display:flex}
+    body.nav-collapsed .chip{position:static;transform:none;right:auto}
+    .nav-toggle{display:none}
+    .shell{padding:26px 20px 60px}.topbar{padding:12px 20px}.mast-in{padding:0 20px;flex-wrap:wrap}
     .mast-side{text-align:left}
-    h1.t{font-size:29px}h2.ex-title{font-size:18px}
+    h1.t,h1.dt{font-size:2.2rem}h2.ex-title{font-size:1.8rem}
     .two,.vgrid{grid-template-columns:1fr}
     .qf,.band{grid-template-columns:1fr}
     .analysis li{grid-template-columns:1fr;gap:6px}
@@ -299,7 +328,8 @@
   <div class="navlabel">Contents</div>
   <nav id="nav"></nav>
   <div class="sfoot">
-    <b>Prepared by</b> Genzeon
+    <div class="sfoot-copy"><b>Prepared by</b> Genzeon</div>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Minimize sidebar" aria-expanded="true" title="Minimize sidebar">«</button>
   </div>
 </aside>
 <main id="main"></main>
@@ -372,24 +402,24 @@ function matrix(){
       <rect x="${medX}" y="${T}" width="${L+px-medX}" height="${medY-T}" fill="${QCOLOR.sb}" fill-opacity=".055"/>
       <rect x="${L}" y="${medY}" width="${medX-L}" height="${T+py-medY}" fill="${QCOLOR.fi}" fill-opacity=".045"/>
       <rect x="${medX}" y="${medY}" width="${L+px-medX}" height="${T+py-medY}" fill="${QCOLOR.dp}" fill-opacity=".055"/>
-      <text x="${L+8}" y="${T+16}" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.qw}">QUICK WINS</text>
-      <text x="${L+px-8}" y="${T+16}" text-anchor="end" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.sb}">STRATEGIC BETS</text>
-      <text x="${L+8}" y="${T+py-9}" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.fi}">FILL-INS</text>
-      <text x="${L+px-8}" y="${T+py-9}" text-anchor="end" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.dp}">DEPRIORITIZE</text>`;
+      <text x="${L+8}" y="${T+16}" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.qw}">QUICK WINS</text>
+      <text x="${L+px-8}" y="${T+16}" text-anchor="end" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.sb}">STRATEGIC BETS</text>
+      <text x="${L+8}" y="${T+py-9}" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.fi}">FILL-INS</text>
+      <text x="${L+px-8}" y="${T+py-9}" text-anchor="end" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.3" fill="${QCOLOR.dp}">DEPRIORITIZE</text>`;
   [0,150000,300000,450000].forEach(v=>{const y=yv(v);
-    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">${v?'$'+v/1000+'K':'0'}</text>`;});
+    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="DM Sans" font-size="9.5" fill="#78859A">${v?'$'+v/1000+'K':'0'}</text>`;});
   [1950000].forEach(v=>{const y=yv(v);
-    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">$1.95M</text>`;});
+    g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/><text x="${L-9}" y="${y+3.5}" text-anchor="end" font-family="DM Sans" font-size="9.5" fill="#78859A">$1.95M</text>`;});
   const by=T+py-py*(LOW_FRAC+GAP_FRAC/2);
   g+=`<path d="M${L-6},${by+7} l7,-5 l-7,-5" fill="none" stroke="#A9B6C6" stroke-width="1.3"/><path d="M${L-6},${by+1} l7,-5 l-7,-5" fill="none" stroke="#A9B6C6" stroke-width="1.3"/>`;
   [100000,120000,140000,160000].forEach(v=>{const x=xv(v);
-    g+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+py}" stroke="#F2F4F7"/><text x="${x}" y="${T+py+18}" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#78859A">$${v/1000}K</text>`;});
+    g+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+py}" stroke="#F2F4F7"/><text x="${x}" y="${T+py+18}" text-anchor="middle" font-family="DM Sans" font-size="9.5" fill="#78859A">$${v/1000}K</text>`;});
   g+=`<line x1="${medX}" y1="${T}" x2="${medX}" y2="${T+py}" stroke="#B9C4D2" stroke-dasharray="4,4"/>
       <line x1="${L}" y1="${medY}" x2="${L+px}" y2="${medY}" stroke="#B9C4D2" stroke-dasharray="4,4"/>`;
   g+=`<line x1="${L}" y1="${T+py}" x2="${L+px}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
       <line x1="${L}" y1="${T}" x2="${L}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
-      <text x="${L+px/2}" y="${H-9}" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ROM INVESTMENT &#8594;</text>
-      <text transform="translate(15,${T+py/2}) rotate(-90)" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ANNUAL BUSINESS VALUE &#8594;</text>`;
+      <text x="${L+px/2}" y="${H-9}" text-anchor="middle" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ROM INVESTMENT &#8594;</text>
+      <text transform="translate(15,${T+py/2}) rotate(-90)" text-anchor="middle" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">ANNUAL BUSINESS VALUE &#8594;</text>`;
   pts.forEach(a=>{
     const x=xv(a.rom), y=yv(a.value), q=quadrantOf(a,med), c=QCOLOR[q];
     const tip = `<div class="tt-h">${a.name}</div>
@@ -405,8 +435,8 @@ function matrix(){
           <circle cx="${x}" cy="${y}" r="17" fill="${c}" fill-opacity=".1"/>
           <circle cx="${x}" cy="${y}" r="8.5" fill="#fff"/>
           <circle class="hit" cx="${x}" cy="${y}" r="7" fill="${c}" stroke="${a.page?'#0F1B2D':'none'}" stroke-width="${a.page?1.6:0}"/>
-          <text x="${x+13}" y="${y-3}" font-family="Archivo" font-size="11" font-weight="700" fill="#0F1B2D">${a.id.replace('UC','')}</text>
-          <text x="${x+13+(a.id.replace('UC','').length>1?18:12)}" y="${y-3}" font-family="Inter" font-size="9" fill="#3A485C">(${usdK(a.value)}, ${usdK(a.rom)})</text>
+          <text x="${x+13}" y="${y-3}" font-family="DM Sans" font-size="11" font-weight="700" fill="#0F1B2D">${a.id.replace('UC','')}</text>
+          <text x="${x+13+(a.id.replace('UC','').length>1?18:12)}" y="${y-3}" font-family="DM Sans" font-size="9" fill="#3A485C">(${usdK(a.value)}, ${usdK(a.rom)})</text>
         </g>`;});
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Value versus investment quadrant matrix">${g}</svg>`;
 }
@@ -441,7 +471,7 @@ function cumulativeChart(pts){
     const widthPct = (s.count/n*100).toFixed(2);
     const mult = s.cR ? s.cV/s.cR : 0;
     return `<div style="width:${widthPct}%;background:${STAGE_COLOR[s.priority]};color:${STAGE_TEXT[s.priority]};padding:8px 12px">
-      <div style="font-family:var(--fd);font-weight:700;font-size:12.5px;letter-spacing:-.01em">Stage ${idx+1} &middot; ${STAGE_LABEL[s.priority]||s.priority}</div>
+      <div style="font-family:var(--fd);font-weight:700;font-size:18px;letter-spacing:-.01em">Stage ${idx+1} &middot; ${STAGE_LABEL[s.priority]||s.priority}</div>
       <div style="font-size:11px;margin-top:2px;font-variant-numeric:tabular-nums lining-nums;opacity:.85">Cumulative return ${mult.toFixed(1)}&times;</div>
     </div>`;
   }).join('');
@@ -455,12 +485,12 @@ function cumulativeChart(pts){
   for(let k=0;k<=4;k++){
     const frac=k/4, y=T+py-frac*py;
     g+=`<line x1="${L}" y1="${y}" x2="${L+px}" y2="${y}" stroke="#EEF1F5"/>
-        <text x="${L-8}" y="${y+3.5}" text-anchor="end" font-family="Inter" font-size="9.5" fill="#78859A">${usdK(frac*maxROM)}</text>
-        <text x="${L+px+8}" y="${y+3.5}" text-anchor="start" font-family="Inter" font-size="9.5" fill="#78859A">${usdK(frac*maxVal)}</text>`;
+        <text x="${L-8}" y="${y+3.5}" text-anchor="end" font-family="DM Sans" font-size="9.5" fill="#78859A">${usdK(frac*maxROM)}</text>
+        <text x="${L+px+8}" y="${y+3.5}" text-anchor="start" font-family="DM Sans" font-size="9.5" fill="#78859A">${usdK(frac*maxVal)}</text>`;
   }
   g+=`<line x1="${L}" y1="${T+py}" x2="${L+px}" y2="${T+py}" stroke="#0F1B2D" stroke-width="1.2"/>
-      <text x="${L-8}" y="${T+py+30}" text-anchor="end" font-family="Archivo" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">SPEND &#8593;</text>
-      <text x="${L+px+8}" y="${T+py+30}" text-anchor="start" font-family="Archivo" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">&#8593; VALUE</text>`;
+      <text x="${L-8}" y="${T+py+30}" text-anchor="end" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">SPEND &#8593;</text>
+      <text x="${L+px+8}" y="${T+py+30}" text-anchor="start" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing=".08em" fill="#78859A">&#8593; VALUE</text>`;
 
   pts.forEach((p,i)=>{
     const x = L+gap*i+(gap-barW)/2;
@@ -477,7 +507,7 @@ function cumulativeChart(pts){
         <rect x="${x}" y="${T}" width="${barW}" height="${py}" fill="transparent"/>
         <rect x="${x}" y="${T+py-barH}" width="${barW}" height="${barH}" fill="${STAGE_COLOR[p.priority]}"/>
         <circle cx="${xCenter(i)}" cy="${yR(p.cV)}" r="10" fill="transparent"/>
-        <text x="${x+barW/2}" y="${T+py+16}" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#78859A">${p.id.replace('UC','')}</text>
+        <text x="${x+barW/2}" y="${T+py+16}" text-anchor="middle" font-family="DM Sans" font-size="9.5" fill="#78859A">${p.id.replace('UC','')}</text>
       </g>`;
   });
 
@@ -489,11 +519,11 @@ function cumulativeChart(pts){
   if(breakevenIdx>=0){
     const bx=xCenter(breakevenIdx);
     g+=`<line x1="${bx}" y1="${T}" x2="${bx}" y2="${T+py}" stroke="#B5641E" stroke-dasharray="4,3"/>
-        <text x="${bx+6}" y="${T+13}" font-family="Archivo" font-size="9" font-weight="700" letter-spacing="1.1" fill="#B5641E">BREAKEVEN AT USE CASE ${breakevenIdx+1}</text>`;
+        <text x="${bx+6}" y="${T+13}" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing="1.1" fill="#B5641E">BREAKEVEN AT USE CASE ${breakevenIdx+1}</text>`;
   }
-  g+=`<text x="${L+px/2}" y="${H-4}" text-anchor="middle" font-family="Archivo" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">USE CASES SEQUENCED BY PAYBACK &#8594;</text>`;
+  g+=`<text x="${L+px/2}" y="${H-4}" text-anchor="middle" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#3A485C">USE CASES SEQUENCED BY PAYBACK &#8594;</text>`;
 
-  const legend = `<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-top:1px solid var(--rule-soft);padding-top:12px;margin-top:10px;font-size:12px;color:var(--ink-2)">
+  const legend = `<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-top:1px solid var(--rule-soft);padding-top:12px;margin-top:10px;font-size:18px;color:var(--ink-2)">
     <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:var(--brand-2);flex:none"></span>Cumulative ROM spend &mdash; left axis</div>
     <div style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:2px;background:#0F1B2D;flex:none"></span>Cumulative business value &mdash; right axis</div>
     <div style="color:var(--mute)">Bar shade marks the delivery stage; the multiple above each stage is cumulative value over cumulative ROM at that point in the sequence.</div>
@@ -520,8 +550,8 @@ function summary(){
       <td class="r mono">${usdK(a.rom)}</td>
       <td class="r mono">${a.payback?a.payback+' mo':'<span class="pend">-</span>'}</td>
       <td class="r mono">${a.net===null?'<span class="pend">-</span>':(a.net<0?`<span class="neg">-${usdK(Math.abs(a.net))}</span>`:usdK(a.net))}</td>
-      <td class="mono" style="font-size:11.5px">${a.timeline}</td>
-      <td style="font-size:11.5px">${a.complexity}</td>
+      <td class="mono">${a.timeline}</td>
+      <td>${a.complexity}</td>
       <td><span class="tier ${a.priority}">${a.priority}</span></td>
     </tr>`).join('');
 
@@ -541,7 +571,7 @@ function summary(){
   const roiMultiple = totR ? (totV/totR) : 0;
   const breakevenIdx = cumPts.findIndex(c=>c.cV>=c.cR);
 
-  return `<div class="masthead"><div class="mast-in">
+  return `<div class="masthead" style="background-image:url('/img/banner-summary.jpg')"><div class="mast-in">
     <div>
       <div class="eyebrow">Automation prioritization - business value assessment</div>
       <h1 class="t">Aspirus Health Automation Prioritization</h1>
@@ -549,7 +579,7 @@ function summary(){
     </div>
     <div class="mast-side">
       <div class="eyebrow">Prepared for</div>
-      <div style="color:#fff;font-weight:600;font-size:13px;margin-top:4px">Randall Sanborn</div>
+      <div style="color:#fff;font-weight:600;font-size:18px;margin-top:4px">Randall Sanborn</div>
       <div>VP, System IT Process and Emerging Technologies, Aspirus Health</div>
     </div>
   </div></div>
@@ -692,15 +722,17 @@ function detail(u, idx){
     </div>`).join('');
   const card = c => `<div class="ocard"><div class="ot">${c.title}</div><div class="od">${c.body}</div></div>`;
 
-  return `<div class="shell">
-    <div class="dhead">
+  return `<div class="masthead" style="background-image:url('/img/banner-${u.id}.jpg')">
+    <div class="mast-in">
       <div>
         <div class="eyebrow">Use case ${u.num} of ${String(UC.length).padStart(2,'0')} &nbsp;&middot;&nbsp; ${u.area} &nbsp;&middot;&nbsp; ${u.bvpId}</div>
-        <h1 class="dt">${u.name}</h1>
-        <p class="dframe">${u.summary}</p>
+        <h1 class="t dt">${u.name}</h1>
+        <p class="lede dframe">${u.summary}</p>
       </div>
       ${u.valuePending?'<div class="tierlg P2">Value pending</div>':''}
     </div>
+  </div>
+  <div class="shell">
 
     <div class="qf">
       <div class="qfc"><div class="k">Annual value</div><div class="v">${u.valuePending?'<span class="pend">Pending</span>':u.valueLabel}</div>${u.valuePending?'<div class="vsub">awaiting volume metrics</div>':''}</div>
@@ -867,8 +899,11 @@ const nav=document.getElementById('nav'), main=document.getElementById('main');
 
 pages.forEach((p,i)=>{
   const b=document.createElement('div');
+  const chipCls = p.priority ? (p.priority==='Pending'?'PD':p.priority) : 'SM';
+  const chipTxt = p.priority ? (p.priority==='Pending'?'TBD':p.priority) : (p.num||'00');
   b.className='nav-item'+(i===0?' active':''); b.dataset.page=p.id; b.tabIndex=0;
-  b.innerHTML=`<span class="nl"><span class="nn">${p.num||'00'}</span><span class="nt">${p.label}</span></span>${p.priority?`<span class="chip ${p.priority==='Pending'?'PD':p.priority}">${p.priority==='Pending'?'TBD':p.priority}</span>`:''}`;
+  b.title=p.label;
+  b.innerHTML=`<span class="nl"><span class="nn">${p.num||'00'}</span><span class="nt">${p.label}</span></span><span class="chip ${chipCls}">${chipTxt}</span>`;
   b.addEventListener('click',()=>go(p.id));
   b.addEventListener('keypress',e=>{if(e.key==='Enter')go(p.id)});
   nav.appendChild(b);
@@ -883,6 +918,22 @@ pages.forEach((p,i)=>{
     window.location.reload();
   });
 });
+
+  const toggle=document.getElementById('nav-toggle');
+  function setNavCollapsed(collapsed){
+    document.body.classList.toggle('nav-collapsed', collapsed);
+    if(toggle){
+      toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      toggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Minimize sidebar');
+      toggle.title = collapsed ? 'Expand sidebar' : 'Minimize sidebar';
+      toggle.textContent = collapsed ? '»' : '«';
+    }
+    try{ localStorage.setItem('portal-nav-collapsed', collapsed ? '1' : '0'); }catch(e){}
+  }
+  if(toggle){
+    try{ if(localStorage.getItem('portal-nav-collapsed')==='1') setNavCollapsed(true); }catch(e){}
+    toggle.addEventListener('click',()=>setNavCollapsed(!document.body.classList.contains('nav-collapsed')));
+  }
 }
 </script>
 
@@ -897,19 +948,19 @@ pages.forEach((p,i)=>{
     height:480px;max-height:calc(100vh - 130px);background:var(--panel);border:1px solid var(--line);
     border-radius:14px;box-shadow:0 18px 48px rgba(13,27,62,.22);display:none;flex-direction:column;overflow:hidden}
   #chat-panel.open{display:flex}
-  #chat-head{padding:13px 16px;background:linear-gradient(165deg,#0D1B3E,#17357C);color:#fff;
-    font-family:var(--fd);font-size:13.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between}
-  #chat-head span.sub{display:block;font-family:var(--fb);font-size:10.5px;font-weight:400;color:#B4C0D2;margin-top:2px}
-  #chat-close{background:none;border:none;color:#B4C0D2;font-size:18px;cursor:pointer;line-height:1}
-  #chat-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.55}
+  #chat-head{padding:13px 16px;background:var(--brand);color:#fff;
+    font-family:var(--fd);font-size:18px;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+  #chat-head span.sub{display:block;font-family:var(--fb);font-size:10.5px;font-weight:400;color:rgba(255,255,255,.82);margin-top:2px}
+  #chat-close{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1}
+  #chat-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:18px;line-height:1.55}
   .chat-msg{max-width:88%;padding:8px 11px;border-radius:10px}
   .chat-msg.user{align-self:flex-end;background:var(--blue-tint);color:var(--ink)}
   .chat-msg.assistant{align-self:flex-start;background:var(--line-soft);color:var(--ink-soft);white-space:pre-wrap}
   .chat-msg.error{align-self:flex-start;background:var(--no-tint);color:var(--no)}
   #chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
   #chat-input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:var(--fb);
-    font-size:12.5px;resize:none;height:36px}
-  #chat-send{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:0 14px;font-size:12.5px;
+    font-size:18px;resize:none;height:40px}
+  #chat-send{background:var(--btn);color:#fff;border:none;border-radius:8px;padding:0 16px;font-size:18px;
     font-weight:600;cursor:pointer}
   #chat-send:disabled{opacity:.5;cursor:default}
 </style>
@@ -988,21 +1039,21 @@ pages.forEach((p,i)=>{
   #login-gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;
     align-items:center;justify-content:center;padding:20px}
   #login-gate.hidden{display:none}
-  #login-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);
+  #login-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);
     border-radius:14px;padding:30px 28px;box-shadow:0 18px 48px rgba(13,27,62,.14)}
-  #login-card h1{font-family:var(--fd);font-size:18px;margin:0 0 6px}
-  #login-card p{font-size:12.5px;color:var(--slate);margin:0 0 20px;line-height:1.55}
+  #login-card h1{font-family:var(--fd);font-size:28px;margin:0 0 8px;line-height:1.2}
+  #login-card p{font-size:18px;color:var(--slate);margin:0 0 20px;line-height:1.55}
   #login-form label{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--slate-lt);margin:0 0 5px}
   #login-form input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;
-    padding:9px 11px;font-family:var(--fb);font-size:13.5px;margin-bottom:14px}
-  #login-form button{width:100%;background:var(--blue);color:#fff;border:none;border-radius:8px;
-    padding:10px;font-size:13.5px;font-weight:600;cursor:pointer}
+    padding:11px 12px;font-family:var(--fb);font-size:18px;margin-bottom:14px}
+  #login-form button{width:100%;background:var(--btn);color:#fff;border:none;border-radius:8px;
+    padding:12px;font-size:18px;font-weight:600;cursor:pointer}
   #login-form button:disabled{opacity:.6;cursor:default}
-  #login-error{display:none;background:var(--no-tint);color:var(--no);font-size:12px;
+  #login-error{display:none;background:var(--no-tint);color:var(--no);font-size:18px;
     padding:8px 10px;border-radius:7px;margin-bottom:14px}
   #login-loading{display:flex;align-items:center;justify-content:center;height:100vh;color:var(--slate);
-    font-family:var(--fm);font-size:12px}
+    font-family:var(--fm);font-size:18px}
 </style>
 <div id="login-loading">Loading&hellip;</div>
 <div id="login-gate" class="hidden">
