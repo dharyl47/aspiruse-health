@@ -1059,11 +1059,11 @@ pages.forEach((p,i)=>{
 <div id="login-gate" class="hidden">
   <div id="login-card">
     <h1>Aspirus Health &mdash; Automation Prioritization</h1>
-    <p>This portal contains confidential business data. Sign in with the credentials you were given.</p>
+    <p>This portal contains confidential business data. Sign in with your email and password.</p>
     <div id="login-error"></div>
     <form id="login-form">
-      <label for="login-user">Username</label>
-      <input id="login-user" name="username" autocomplete="username" required>
+      <label for="login-user">Email</label>
+      <input id="login-user" name="email" type="email" autocomplete="username" required>
       <label for="login-pass">Password</label>
       <input id="login-pass" name="password" type="password" autocomplete="current-password" required>
       <button type="submit" id="login-submit">Sign in</button>
@@ -1118,7 +1118,7 @@ pages.forEach((p,i)=>{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          username: document.getElementById('login-user').value,
+          email: document.getElementById('login-user').value,
           password: document.getElementById('login-pass').value
         })
       });
@@ -1127,7 +1127,7 @@ pages.forEach((p,i)=>{
         await loadData();
       } else {
         const data = await res.json().catch(()=>({}));
-        errBox.textContent = data.error || 'Invalid username or password.';
+        errBox.textContent = data.error || 'Invalid email or password.';
         errBox.style.display='block';
       }
     } catch(err){

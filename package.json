@@ -7,11 +7,10 @@
   },
   "scripts": {
     "start": "node server.js",
-    "check-data": "node scripts/extract-data.js",
-    "hash-password": "node scripts/hash-password.js"
+    "check-data": "node scripts/extract-data.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "@supabase/supabase-js": "^2.112.3",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0"
   },

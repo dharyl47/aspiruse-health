@@ -7,11 +7,9 @@ services:
     startCommand: npm start
     healthCheckPath: /healthz
     envVars:
-      - key: PORTAL_USERNAME
+      - key: SUPABASE_URL
         sync: false
-      - key: PORTAL_PASSWORD_HASH
-        sync: false
-      - key: SESSION_SECRET
+      - key: SUPABASE_ANON_KEY
         sync: false
       - key: OPENAI_API_KEY
         sync: false

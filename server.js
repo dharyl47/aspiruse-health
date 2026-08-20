@@ -7,13 +7,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const path = require('path');
-const crypto = require('crypto');
 const fs = require('fs');
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const rateLimit = require('express-rate-limit');
+const { createClient } = require('@supabase/supabase-js');
 
-const REQUIRED_ENV = ['PORTAL_USERNAME', 'PORTAL_PASSWORD_HASH', 'SESSION_SECRET'];
+const REQUIRED_ENV = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
 const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missing.length) {
   console.error(`Missing required environment variable(s): ${missing.join(', ')}`);
@@ -22,8 +21,9 @@ if (missing.length) {
 }
 
 const PORT = process.env.PORT || 3000;
-const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
-const COOKIE_NAME = 'portal_session';
+const ACCESS_COOKIE = 'sb-access-token';
+const REFRESH_COOKIE = 'sb-refresh-token';
+const REFRESH_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 const DATA_PATH = path.join(__dirname, 'data', 'usecases.json');
 let usecaseData = null;
@@ -32,42 +32,69 @@ function loadData() {
   return usecaseData;
 }
 
-// ---------- session token: HMAC-signed, no external session store needed ----------
-// Everyone shares one login, so there's only one identity to revoke: bumping
-// `sessionEpoch` on logout invalidates every token issued before that moment,
-// even ones already handed out to other tabs/devices/copies of the cookie.
-// (Relies on the server being one long-running process, which is how Render
-// runs a Free/Starter web service — if this ever moves to multiple instances,
-// swap this for a shared store like Redis.)
-let sessionEpoch = Date.now();
-
-function signSession() {
-  const payload = Buffer.from(JSON.stringify({ exp: Date.now() + SESSION_TTL_MS, since: sessionEpoch })).toString('base64url');
-  const sig = crypto.createHmac('sha256', process.env.SESSION_SECRET).update(payload).digest('base64url');
-  return `${payload}.${sig}`;
+function createAnonClient() {
+  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
 }
 
-function verifySession(token) {
-  if (!token || typeof token !== 'string' || !token.includes('.')) return false;
-  const [payload, sig] = token.split('.');
-  const expectedSig = crypto.createHmac('sha256', process.env.SESSION_SECRET).update(payload).digest('base64url');
-  const sigBuf = Buffer.from(sig || '');
-  const expectedBuf = Buffer.from(expectedSig);
-  if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) return false;
-  try {
-    const { exp, since } = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-    if (typeof exp !== 'number' || Date.now() >= exp) return false;
-    if (since !== sessionEpoch) return false; // revoked by a logout since this token was issued
-    return true;
-  } catch {
-    return false;
+function cookieBase() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== 'development',
+    sameSite: 'lax',
+    path: '/',
+  };
+}
+
+function setSessionCookies(res, session) {
+  const accessMaxAge = Math.max(60, Number(session.expires_in) || 3600) * 1000;
+  res.cookie(ACCESS_COOKIE, session.access_token, { ...cookieBase(), maxAge: accessMaxAge });
+  if (session.refresh_token) {
+    res.cookie(REFRESH_COOKIE, session.refresh_token, { ...cookieBase(), maxAge: REFRESH_TTL_MS });
   }
 }
 
-function requireAuth(req, res, next) {
-  const token = req.cookies && req.cookies[COOKIE_NAME];
-  if (!verifySession(token)) return res.status(401).json({ error: 'Not signed in.' });
-  next();
+function clearSessionCookies(res) {
+  res.clearCookie(ACCESS_COOKIE, { path: '/' });
+  res.clearCookie(REFRESH_COOKIE, { path: '/' });
+}
+
+async function requireAuth(req, res, next) {
+  try {
+    const access = req.cookies && req.cookies[ACCESS_COOKIE];
+    const refresh = req.cookies && req.cookies[REFRESH_COOKIE];
+    if (!access && !refresh) return res.status(401).json({ error: 'Not signed in.' });
+
+    const supabase = createAnonClient();
+
+    if (access) {
+      const { data, error } = await supabase.auth.getUser(access);
+      if (!error && data.user) {
+        req.user = data.user;
+        return next();
+      }
+    }
+
+    if (!refresh) return res.status(401).json({ error: 'Not signed in.' });
+
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token: refresh });
+    if (error || !data.session || !data.user) {
+      clearSessionCookies(res);
+      return res.status(401).json({ error: 'Not signed in.' });
+    }
+
+    setSessionCookies(res, data.session);
+    req.user = data.user;
+    next();
+  } catch (err) {
+    console.error('Auth check failed', err);
+    return res.status(500).json({ error: 'Authentication failed.' });
+  }
 }
 
 // tiny cookie parser — avoids pulling in the `cookie-parser` dependency
@@ -99,36 +126,54 @@ const loginLimiter = rateLimit({
   message: { error: 'Too many attempts. Try again later.' },
 });
 
-app.post('/api/login', loginLimiter, (req, res) => {
-  const { username, password } = req.body || {};
-  if (typeof username !== 'string' || typeof password !== 'string') {
-    return res.status(400).json({ error: 'Invalid username or password.' });
+app.post('/api/login', loginLimiter, async (req, res) => {
+  const email = ((req.body && (req.body.email || req.body.username)) || '').toString().trim();
+  const password = ((req.body && req.body.password) || '').toString();
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Invalid email or password.' });
+  }
+  if (!email.includes('@')) {
+    return res.status(400).json({ error: 'Sign in with your email address.' });
   }
 
-  // Username isn't secret (it's shared alongside the password), so a plain
-  // comparison is fine — bcrypt.compareSync below is what needs to be constant-time,
-  // and it is internally.
-  const userOk = username === process.env.PORTAL_USERNAME;
-  const passOk = bcrypt.compareSync(password, process.env.PORTAL_PASSWORD_HASH);
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session) {
+      const unconfirmed = /confirm/i.test(error && error.message ? error.message : '');
+      return res.status(401).json({
+        error: unconfirmed
+          ? 'Email not confirmed. Confirm it in Supabase Auth, or disable email confirmations for this project.'
+          : 'Invalid email or password.',
+      });
+    }
 
-  if (!userOk || !passOk) {
-    return res.status(401).json({ error: 'Invalid username or password.' });
+    setSessionCookies(res, data.session);
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('Login failed', err);
+    return res.status(502).json({ error: 'Could not reach the sign-in service.' });
   }
-
-  const token = signSession();
-  res.cookie(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'lax',
-    maxAge: SESSION_TTL_MS,
-    path: '/',
-  });
-  res.status(200).json({ ok: true });
 });
 
-app.post('/api/logout', (req, res) => {
-  sessionEpoch = Date.now(); // invalidates every outstanding session token, not just this browser's
-  res.clearCookie(COOKIE_NAME, { path: '/' });
+app.post('/api/logout', async (req, res) => {
+  const access = req.cookies && req.cookies[ACCESS_COOKIE];
+  const refresh = req.cookies && req.cookies[REFRESH_COOKIE];
+
+  if (access || refresh) {
+    try {
+      const supabase = createAnonClient();
+      if (access && refresh) {
+        await supabase.auth.setSession({ access_token: access, refresh_token: refresh });
+      }
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (err) {
+      console.error('Supabase sign-out failed', err);
+    }
+  }
+
+  clearSessionCookies(res);
   res.status(200).json({ ok: true });
 });
 

@@ -1,43 +1,29 @@
-# Deploying the Aspirus priority portal (Render, shared login)
+# Deploying the Aspirus priority portal (Render, Supabase Auth)
 
 A small Express server serves the portal shell (`public/index.html` — layout, CSS,
 render logic, no confidential data) and gates the actual use-case data and the
-chatbot behind a single shared username/password, so it can be shared with
-reviewers outside your network without individual accounts.
+chatbot behind Supabase email/password login.
 
 ## What's in here
 
 | Path | Purpose |
 |---|---|
-| `server.js` | Express app: login/logout, session cookies, `/api/data`, `/api/chat` |
+| `server.js` | Express app: login/logout via Supabase, session cookies, `/api/data`, `/api/chat` |
 | `public/index.html` | The portal page — static, contains no confidential data |
 | `data/usecases.json` | The confidential use-case data — server-side only, never in `public/` |
-| `scripts/hash-password.js` | Run locally to turn a chosen password into a bcrypt hash |
 | `scripts/extract-data.js` | Sanity-checks `data/usecases.json` (run after editing it) |
 | `render.yaml` | Render Blueprint so the service can be created straight from the repo |
+| `supabase/` | Linked Supabase project config (`config.toml`) |
 
 ## One-time setup
 
-### 1. Choose a password and hash it locally
+### 1. Create reviewers in Supabase Auth
 
-```bash
-npm install
-node scripts/hash-password.js
-```
+In the [Supabase dashboard](https://supabase.com/dashboard/project/ahidtkwulerqmnscnlaa/auth/users) → **Authentication → Users → Add user**. Use each reviewer's email and a password. If sign-in fails with "email not confirmed", either confirm the user or turn off **Confirm email** under Authentication → Providers → Email.
 
-This prompts for a password (input hidden, never written to disk) and prints a
-bcrypt hash. Pick something long and random — this is the one secret standing
-between the internet and this data, so treat it like a real credential, not a
-throwaway. **Save the raw password yourself** (e.g. in a password manager) —
-only the hash goes into Render.
+Copy the project URL and **publishable / anon** key from Settings → API. Never put the `service_role` key in this app or in Render.
 
-### 2. Generate a session-signing secret
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-### 3. Push this folder to a **private** GitHub repo
+### 2. Push this folder to a **private** GitHub repo
 
 ```bash
 git init
@@ -48,10 +34,10 @@ gh repo create aspirus-priority-portal --private --source=. --push
 ```
 
 `data/usecases.json` and `.env.example` are fine to commit — the real secrets
-(password hash, session secret, OpenAI key) never live in the repo, only in
-Render's environment variables. `.gitignore` already excludes `.env`.
+(Supabase keys, OpenAI key) never live in the repo, only in Render's environment
+variables. `.gitignore` already excludes `.env`.
 
-### 4. Create the Render service
+### 3. Create the Render service
 
 Easiest: in the [Render Dashboard](https://dashboard.render.com), **New →
 Blueprint**, point it at your repo — it reads `render.yaml` and creates the
@@ -61,14 +47,13 @@ command, `/healthz` health check).
 (Or manually: **New → Web Service** → connect the repo → Environment: Node →
 Build command `npm install` → Start command `npm start`.)
 
-### 5. Set the environment variables
+### 4. Set the environment variables
 
 In the service → **Environment**, add:
 
-- `PORTAL_USERNAME` — the username you'll share
-- `PORTAL_PASSWORD_HASH` — the bcrypt hash from step 1
-- `SESSION_SECRET` — the random string from step 2
-- `OPENAI_API_KEY` — your OpenAI key
+- `SUPABASE_URL` — e.g. `https://ahidtkwulerqmnscnlaa.supabase.co`
+- `SUPABASE_ANON_KEY` — the publishable / anon key
+- `OPENAI_API_KEY` — your OpenAI key (optional; chat stays off without it)
 
 Deploy. Your URL is `https://<service-name>.onrender.com`.
 
@@ -85,29 +70,14 @@ There's no separate on/off setting for the chat widget: the 💬 icon and
 
 ## Sharing access with people outside your network
 
-Give them the URL, the username, and the password — but **not in the same
-message**. Send the username by email/Slack and the password over a different
-channel (text, phone call, or a password manager's share feature). This is the
-standard mitigation for the main weakness of a shared credential: if one
-channel is compromised, the whole login isn't.
+Create a Supabase Auth user for each reviewer, then give them the URL, their
+email, and their password — but **not in the same message**. Send the email by
+Slack and the password over a different channel (text, phone call, or a
+password manager's share feature).
 
-**Tradeoffs of a single shared credential, so you know what you're accepting:**
-- No per-person audit trail — you can't tell who's asking the chatbot what.
-- No selective revocation — removing one person's access means changing the
-  password for everyone (see below).
-- If it leaks, it's a full compromise of the confidential data until rotated.
-
-An 8-hour session (already configured) limits how long a copied/forwarded
-cookie stays valid even if a session leaks. Because everyone shares one login,
-clicking **Log out** signs out *everyone's* active session, not just yours —
-there's only one identity to log out of.
-
-## Rotating or revoking the password
-
-Re-run `node scripts/hash-password.js` with a new password, update
-`PORTAL_PASSWORD_HASH` in Render's Environment tab, and it takes effect
-immediately on the next deploy/restart — the old password stops working for
-everyone at once (including anyone still logged in past their 8-hour session).
+**Log out** ends only that browser's session (the server clears the httpOnly
+cookies and revokes the refresh token). To remove someone's access entirely,
+delete or ban the user in Supabase Auth.
 
 ## Updating the data or the page
 
@@ -120,13 +90,13 @@ Render redeploys automatically on push if you used the Blueprint/GitHub flow.
 
 ```bash
 cp .env.example .env
-# fill in PORTAL_USERNAME, PORTAL_PASSWORD_HASH (from step 1), SESSION_SECRET, OPENAI_API_KEY
+# fill in SUPABASE_URL, SUPABASE_ANON_KEY, OPENAI_API_KEY
 npm install
 npm start
 ```
 
 Visit `http://localhost:3000` — you should see the login form, and the
-dashboard should load after signing in.
+dashboard should load after signing in with a Supabase Auth user.
 
 ## A note on Render's free tier
 
