@@ -56,7 +56,8 @@
   .chip.P2{background:rgba(255,255,255,.22);color:#fff}
   .chip.P3{background:rgba(255,255,255,.11);color:#fff}
   .chip.PD{background:rgba(255,255,255,.22);color:#fff}
-  .chip.SM{background:rgba(255,255,255,.18);color:#fff}
+  .chip.SM{background:rgba(255,255,255,.18);color:#fff;display:none}
+  body.nav-collapsed .chip.SM{display:inline-block}
   .tier.Pending{background:var(--hot-lt);color:var(--hot)}
   .sfoot{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:10px;color:#fff;line-height:1.75;display:flex;align-items:center;justify-content:space-between;gap:8px}
   .sfoot b{color:#fff;font-weight:600}
@@ -99,7 +100,7 @@
   .mast-in>div:first-child .eyebrow:before{content:'';width:12px;height:12px;background:var(--brand);flex-shrink:0}
   .masthead h1.t, .masthead h1.dt{font-family:var(--fd);font-size:3rem;font-weight:700;line-height:1.06;letter-spacing:-.03em;margin:0 0 15px;max-width:none;color:#fff}
   .masthead p.lede, .masthead .dframe{font-size:18px;line-height:1.7;color:rgba(255,255,255,.9);max-width:62ch;margin:0}
-  .mast-side{text-align:right;font-size:14px;line-height:1.85;color:rgba(255,255,255,.82);flex:0 0 230px;padding-top:0;margin-top:0}
+  .mast-side{text-align:right;font-size:14px;line-height:1.85;color:rgba(255,255,255,.82);flex:0 0 280px;padding-top:0;margin-top:0}
   .mast-side .eyebrow{margin-bottom:16px;line-height:12px}
   .masthead .tierlg{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45)}
 
@@ -582,7 +583,7 @@ function summary(){
     <div class="mast-side">
       <div class="eyebrow">Prepared for</div>
       <div style="color:#fff;font-weight:600;font-size:18px;margin-top:4px">Randall Sanborn</div>
-      <div>VP, System IT Process and Emerging Technologies, Aspirus Health</div>
+      <div>VP, System IT Process and<br>Emerging Technologies, Aspirus Health</div>
     </div>
   </div></div>
 
@@ -622,7 +623,7 @@ function summary(){
             <div class="kgrp">
               <div class="kh">Reading the chart</div>
               <div class="krow"><span class="kdot ringed"></span><span>Ringed = detailed assessment complete</span></div>
-              <span class="kread">Zones split at the median across the 9 quantified use cases - ${usdK(qMed.value)} value, ${usdK(qMed.rom)} ROM. The value axis is broken; Care Gap sits far above the rest. Hover a bubble for exact figures.</span>
+              <span class="kread">Zones split at the median across the 9 quantified use cases - ${usdK(qMed.value)} value, ${usdK(qMed.rom)} ROM. The value axis is broken; Care Gap sits far above the rest. Hover over a bubble to view exact figure.</span>
             </div>
           </div>
         </div>
